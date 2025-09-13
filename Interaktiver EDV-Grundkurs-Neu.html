@@ -1,0 +1,3265 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaktiver EDV-Grundkurs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .editor-area {
+            border: 1px solid #d1d5db;
+            padding: 1rem;
+            min-height: 400px;
+            border-radius: 0.375rem;
+            outline: none;
+            line-height: 1.6;
+        }
+        .editor-area:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+        }
+        .excel-grid td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            min-width: 80px;
+            text-align: left;
+        }
+        .excel-grid th {
+            border: 1px solid #ccc;
+            padding: 8px;
+            background-color: #f3f4f6;
+            font-weight: bold;
+            text-align: center;
+        }
+        [contenteditable="true"]:focus {
+            outline: 2px solid #3b82f6;
+            background-color: #eff6ff;
+        }
+        .tab.active {
+            border-bottom-color: #3b82f6;
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        
+        /* Überschrift-Größen im Editor */
+        #editor h1 {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 0.67em 0;
+            line-height: 1.2;
+        }
+        
+        #editor h2 {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 0.83em 0;
+            line-height: 1.3;
+        }
+        
+        #editor h3 {
+            font-size: 1.17em;
+            font-weight: bold;
+            margin: 1em 0;
+            line-height: 1.4;
+        }
+
+        /* Windows 10 Desktop Simulation */
+        .win10-desktop {
+            width: 100%;
+            height: 600px;
+            background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%);
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: default;
+            user-select: none;
+        }
+
+        .win10-taskbar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .win10-start-button {
+            width: 40px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .win10-desktop-icons {
+            padding: 20px;
+        }
+
+        .desktop-icon {
+            width: 80px;
+            height: 100px;
+            display: inline-block;
+            margin: 10px;
+            text-align: center;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+            padding: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .desktop-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .desktop-icon img {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 5px;
+        }
+
+        .desktop-icon-text {
+            font-size: 12px;
+            line-height: 1.2;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .context-menu {
+            position: absolute;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            padding: 2px 0;
+            min-width: 180px;
+            font-size: 14px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .context-menu-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .context-menu-item:hover {
+            background: #e3f2fd;
+        }
+
+        .context-menu-separator {
+            height: 1px;
+            background: #e0e0e0;
+            margin: 2px 0;
+        }
+
+        .folder-created {
+            background: rgba(255, 255, 0, 0.3) !important;
+            border: 2px dashed #ffd700;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Willkommen zum EDV-Grundkurs</h1>
+            <p class="text-lg text-gray-600 mt-2">Interaktive Übungen für Word, Excel & Shortcuts</p>
+        </header>
+
+        <!-- Tabs Navigation -->
+        <div class="border-b border-gray-200 mb-6">
+            <nav class="flex space-x-4" aria-label="Tabs">
+                <button onclick="changeTab('explorer')" class="tab py-3 px-4 text-center text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700 transition">
+                    Explorer-Grundlagen
+                </button>
+                <button onclick="changeTab('shortcuts')" class="tab py-3 px-4 text-center text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700 transition">
+                    Shortcuts-Grundlagen
+                </button>
+                <button onclick="changeTab('word')" class="tab py-3 px-4 text-center text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700 transition">
+                    Word-Grundlagen
+                </button>
+                <button onclick="changeTab('excel')" class="tab py-3 px-4 text-center text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700 transition">
+                    Excel-Grundlagen
+                </button>
+                <button onclick="changeTab('hardware')" class="tab py-3 px-4 text-center text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700 transition">
+                    Hardware-Grundlagen
+                </button>
+            </nav>
+        </div>
+
+        <!-- Welcome Section -->
+        <div id="welcome" class="bg-white p-8 rounded-lg shadow-md">
+            <div class="text-center">
+                <div class="text-6xl mb-6">💻</div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Willkommen zum EDV-Grundkurs</h2>
+                <p class="text-xl text-gray-600 mb-8">Interaktive Übungen für Explorer, Shortcuts, Word & Excel</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+                    <div class="bg-blue-50 p-6 rounded-lg border hover:shadow-lg transition cursor-pointer" onclick="changeTab('explorer')">
+                        <div class="text-4xl mb-3">📁</div>
+                        <h3 class="text-lg font-semibold text-blue-800 mb-2">Explorer-Grundlagen</h3>
+                        <p class="text-sm text-blue-600">Dateien und Ordner verwalten</p>
+                    </div>
+                    
+                    <div class="bg-purple-50 p-6 rounded-lg border hover:shadow-lg transition cursor-pointer" onclick="changeTab('shortcuts')">
+                        <div class="text-4xl mb-3">⌨️</div>
+                        <h3 class="text-lg font-semibold text-purple-800 mb-2">Shortcuts-Grundlagen</h3>
+                        <p class="text-sm text-purple-600">Tastenkombinationen lernen</p>
+                    </div>
+                    
+                    <div class="bg-green-50 p-6 rounded-lg border hover:shadow-lg transition cursor-pointer" onclick="changeTab('word')">
+                        <div class="text-4xl mb-3">📝</div>
+                        <h3 class="text-lg font-semibold text-green-800 mb-2">Word-Grundlagen</h3>
+                        <p class="text-sm text-green-600">Texte formatieren und gestalten</p>
+                    </div>
+                    
+                    <div class="bg-emerald-50 p-6 rounded-lg border hover:shadow-lg transition cursor-pointer" onclick="changeTab('excel')">
+                        <div class="text-4xl mb-3">📊</div>
+                        <h3 class="text-lg font-semibold text-emerald-800 mb-2">Excel-Grundlagen</h3>
+                        <p class="text-sm text-emerald-600">Tabellen und Berechnungen</p>
+                    </div>
+                    
+                    <div class="bg-orange-50 p-6 rounded-lg border hover:shadow-lg transition cursor-pointer" onclick="changeTab('hardware')">
+                        <div class="text-4xl mb-3">🖥️</div>
+                        <h3 class="text-lg font-semibold text-orange-800 mb-2">Hardware-Grundlagen</h3>
+                        <p class="text-sm text-orange-600">Computer-Komponenten kennenlernen</p>
+                    </div>
+                </div>
+                
+                <div class="mt-8 text-gray-500">
+                    <p class="text-sm">Klicken Sie auf einen Bereich, um mit den Übungen zu beginnen</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Word Section -->
+        <main id="word" class="bg-white p-6 rounded-lg shadow-md hidden">
+            <div id="word-task-container" class="mb-6">
+                <!-- Wird von JavaScript gefüllt -->
+            </div>
+            
+            <!-- Word-Simulator Toolbar -->
+            <div class="bg-gray-100 p-3 rounded-t-lg border border-b-0 border-gray-300">
+                <!-- Erste Zeile: Schriftart und Größe -->
+                <div class="flex items-center space-x-3 mb-2">
+                    <select onchange="formatDoc('fontName', this.value)" class="px-2 py-1 border rounded text-sm" title="Schriftart">
+                        <option value="Arial">Arial</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Helvetica">Helvetica</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Verdana">Verdana</option>
+                    </select>
+                    <select onchange="formatDoc('fontSize', this.value)" class="px-2 py-1 border rounded text-sm" title="Schriftgröße">
+                        <option value="1">Klein (8pt)</option>
+                        <option value="2">Normal (10pt)</option>
+                        <option value="3" selected>Standard (12pt)</option>
+                        <option value="4">Groß (14pt)</option>
+                        <option value="5">Größer (18pt)</option>
+                        <option value="6">Sehr groß (24pt)</option>
+                        <option value="7">Riesig (36pt)</option>
+                    </select>
+                </div>
+                
+                <!-- Zweite Zeile: Formatierung -->
+                <div class="flex items-center space-x-2 mb-2">
+                    <button onclick="formatDoc('bold')" class="p-2 rounded hover:bg-gray-200 border" title="Fett (Strg+B)">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h6M11 5v14M11 5C8.79 5 7 6.79 7 9s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"></path></svg>
+                    </button>
+                    <button onclick="formatDoc('italic')" class="p-2 rounded hover:bg-gray-200 border" title="Kursiv (Strg+I)">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 5l-2 14M16 5l-2 14"></path></svg>
+                    </button>
+                    <button onclick="formatDoc('underline')" class="p-2 rounded hover:bg-gray-200 border" title="Unterstreichen (Strg+U)">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15h14M5 19h14"></path></svg>
+                    </button>
+                    
+                    <div class="border-l border-gray-400 h-8 mx-2"></div>
+                    
+                    <div class="flex items-center space-x-2">
+                        <div class="flex items-center space-x-1">
+                            <span class="text-xs text-gray-600">Textfarbe:</span>
+                            <input type="color" id="textColorPicker" class="w-6 h-6 cursor-pointer rounded border" title="Textfarbe wählen" value="#ff0000" onclick="showTextColorOK()">
+                            <button id="textColorOK" onclick="applySelectedTextColor()" class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600" title="Textfarbe anwenden" style="display: none;">OK</button>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            <span class="text-xs text-gray-600">Markieren:</span>
+                            <input type="color" id="bgColorPicker" class="w-6 h-6 cursor-pointer rounded border" title="Markierfarbe wählen" value="#ffff00" onclick="showBgColorOK()">
+                            <button id="bgColorOK" onclick="applySelectedBackgroundColor()" class="px-2 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600" title="Markierung anwenden" style="display: none;">OK</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dritte Zeile: Überschriften und Bild -->
+                <div class="flex items-center space-x-2 mb-2">
+                    <button onclick="formatDoc('formatBlock', 'h1')" class="px-3 py-1 text-lg font-bold border rounded hover:bg-gray-200" title="Überschrift 1 (Groß)">H1</button>
+                    <button onclick="formatDoc('formatBlock', 'h2')" class="px-3 py-1 text-base font-semibold border rounded hover:bg-gray-200" title="Überschrift 2 (Mittel)">H2</button>
+                    <button onclick="formatDoc('formatBlock', 'h3')" class="px-3 py-1 text-sm font-medium border rounded hover:bg-gray-200" title="Überschrift 3 (Klein)">H3</button>
+                    <button onclick="formatDoc('formatBlock', 'p')" class="px-3 py-1 text-sm border rounded hover:bg-gray-200" title="Normal">Normal</button>
+                    
+                    <div class="border-l border-gray-400 h-8 mx-2"></div>
+                    
+                    <input type="file" id="imageInput" accept="image/*" onchange="insertImage()" class="hidden">
+                    <button onclick="document.getElementById('imageInput').click()" class="px-3 py-1 text-sm border rounded hover:bg-gray-200 bg-blue-100" title="Bild einfügen">
+                        📷 Bild
+                    </button>
+                    
+                </div>
+                
+                <!-- Vierte Zeile: Listen und Ausrichtung -->
+                <div class="flex items-center space-x-2 mb-2">
+                    <button onclick="makeList('ol')" class="px-3 py-1 text-sm border rounded hover:bg-gray-200" title="Nummerierte Liste">
+                        1. Liste
+                    </button>
+                    
+                    <div class="border-l border-gray-400 h-8 mx-2"></div>
+                    
+                    <button onclick="formatDoc('justifyLeft')" class="px-3 py-1 text-sm border rounded hover:bg-gray-200" title="Links ausrichten">◀</button>
+                    <button onclick="formatDoc('justifyCenter')" class="px-3 py-1 text-sm border rounded hover:bg-gray-200" title="Zentrieren">▬</button>
+                    <button onclick="formatDoc('justifyRight')" class="px-3 py-1 text-sm border rounded hover:bg-gray-200" title="Rechts ausrichten">▶</button>
+                    <button onclick="formatDoc('justifyFull')" class="px-3 py-1 text-sm border rounded hover:bg-gray-200" title="Blocksatz">▬▬</button>
+                </div>
+                
+                <!-- Fünfte Zeile: Erweiterte Funktionen -->
+                <div class="flex items-center space-x-2">
+                    <div class="relative inline-block">
+                        <button onclick="showTableSelector()" class="px-3 py-1 text-sm border rounded hover:bg-gray-200 bg-green-100" title="Tabelle einfügen">
+                            📊 Tabelle
+                        </button>
+                        <div id="table-selector" class="absolute top-full left-0 bg-white border border-gray-300 shadow-lg rounded p-2 hidden z-50" style="width: 200px;">
+                            <div class="text-xs text-gray-600 mb-2 text-center">Tabellengröße auswählen</div>
+                            <div id="table-grid" class="grid grid-cols-6 gap-1 mb-2">
+                                <!-- Wird von JavaScript gefüllt -->
+                            </div>
+                            <div id="table-preview" class="text-xs text-center text-gray-500">1 x 1 Tabelle</div>
+                        </div>
+                    </div>
+                    
+                    <div class="relative inline-block">
+                        <button onclick="showColumnSelector()" class="px-3 py-1 text-sm border rounded hover:bg-gray-200" title="Spalten erstellen">
+                            ▌▌ Spalten
+                        </button>
+                        <div id="column-selector" class="absolute top-full left-0 bg-white border border-gray-300 shadow-lg rounded p-3 hidden z-50" style="width: 250px;">
+                            <div class="text-xs text-gray-600 mb-3 text-center">Anzahl Spalten auswählen</div>
+                            <div class="flex gap-2 mb-3 justify-center">
+                                <button onclick="insertColumnsWithCount(1)" class="px-3 py-2 text-sm border rounded hover:bg-blue-100">
+                                    <div class="w-8 h-6 bg-gray-200 border"></div>
+                                    <div class="text-xs mt-1">1</div>
+                                </button>
+                                <button onclick="insertColumnsWithCount(2)" class="px-3 py-2 text-sm border rounded hover:bg-blue-100">
+                                    <div class="flex gap-1">
+                                        <div class="w-3 h-6 bg-gray-200 border"></div>
+                                        <div class="w-3 h-6 bg-gray-200 border"></div>
+                                    </div>
+                                    <div class="text-xs mt-1">2</div>
+                                </button>
+                                <button onclick="insertColumnsWithCount(3)" class="px-3 py-2 text-sm border rounded hover:bg-blue-100">
+                                    <div class="flex gap-1">
+                                        <div class="w-2 h-6 bg-gray-200 border"></div>
+                                        <div class="w-2 h-6 bg-gray-200 border"></div>
+                                        <div class="w-2 h-6 bg-gray-200 border"></div>
+                                    </div>
+                                    <div class="text-xs mt-1">3</div>
+                                </button>
+                            </div>
+                            <div class="border-t pt-2">
+                                <button onclick="insertColumnsWithCount(4)" class="w-full px-2 py-1 text-xs border rounded hover:bg-blue-100 mb-1">
+                                    4 Spalten
+                                </button>
+                                <button onclick="insertColumnsWithCount(5)" class="w-full px-2 py-1 text-xs border rounded hover:bg-blue-100">
+                                    5 Spalten
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="insertSpecialChar()" class="px-3 py-1 text-sm border rounded hover:bg-gray-200" title="Sonderzeichen">
+                        © Symbol
+                    </button>
+                    
+                    <div class="relative inline-block">
+                        <button onclick="showEffectsSelector()" class="px-3 py-1 text-sm border rounded hover:bg-gray-200 bg-yellow-100" title="Texteffekte">
+                            ✨ Effekt
+                        </button>
+                        <div id="effects-selector" class="absolute top-full left-0 bg-white border border-gray-300 shadow-lg rounded p-3 hidden z-50" style="width: 220px;">
+                            <div class="text-xs text-gray-600 mb-3 text-center">Texteffekt auswählen</div>
+                            <div class="space-y-2">
+                                <button onclick="applySpecificEffect('shadow')" class="w-full px-3 py-2 text-sm border rounded hover:bg-blue-100 text-left" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+                                    🌑 Schatten - Schatten-Effekt
+                                </button>
+                                <button onclick="applySpecificEffect('glow')" class="w-full px-3 py-2 text-sm border rounded hover:bg-blue-100 text-left" style="text-shadow: 0 0 10px #00ff00;">
+                                    ✨ Glow - Leucht-Effekt
+                                </button>
+                                <button onclick="applySpecificEffect('outline')" class="w-full px-3 py-2 text-sm border rounded hover:bg-blue-100 text-left" style="-webkit-text-stroke: 1px #000; color: transparent;">
+                                    ⭕ Outline - Umriss-Effekt
+                                </button>
+                                <button onclick="applySpecificEffect('3d')" class="w-full px-3 py-2 text-sm border rounded hover:bg-blue-100 text-left" style="text-shadow: 1px 1px 0px #ccc, 2px 2px 0px #bbb;">
+                                    📐 3D - Dreidimensional
+                                </button>
+                                <button onclick="applySpecificEffect('transparent')" class="w-full px-3 py-2 text-sm border rounded hover:bg-blue-100 text-left" style="opacity: 0.5;">
+                                    👻 Transparent - Durchsichtig
+                                </button>
+                                <button onclick="applySpecificEffect('rainbow')" class="w-full px-3 py-2 text-sm border rounded hover:bg-blue-100 text-left" style="background: linear-gradient(45deg, red, orange, yellow, green, blue, purple); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                                    🌈 Regenbogen - Bunt
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!-- Word-Simulator Editor -->
+            <div id="editor" class="editor-area" contenteditable="true">
+                Meine erste Überschrift
+            </div>
+
+            <!-- Word Aufgaben Controls -->
+            <div class="mt-4 text-center">
+                <button onclick="checkWordTask()" id="word-check-btn" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
+                    Aufgabe prüfen
+                </button>
+                <button onclick="nextWordTask()" id="word-next-btn" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 ml-3" style="display: none;">
+                    Nächste Aufgabe
+                </button>
+                <div id="word-feedback" class="mt-3 text-center font-semibold"></div>
+                
+                <!-- Debug: Direkt zu Aufgabe springen -->
+                <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
+                    <p class="text-sm text-gray-600 mb-2"><strong>TEST-Modus:</strong> Direkt zu Aufgabe springen:</p>
+                    <div class="flex flex-wrap gap-1 justify-center">
+                        <button onclick="jumpToTask(0)" class="px-2 py-1 text-xs bg-yellow-200 hover:bg-yellow-300 rounded">1</button>
+                        <button onclick="jumpToTask(1)" class="px-2 py-1 text-xs bg-yellow-200 hover:bg-yellow-300 rounded">2</button>
+                        <button onclick="jumpToTask(2)" class="px-2 py-1 text-xs bg-yellow-200 hover:bg-yellow-300 rounded">3</button>
+                        <button onclick="jumpToTask(3)" class="px-2 py-1 text-xs bg-yellow-200 hover:bg-yellow-300 rounded">4</button>
+                        <button onclick="jumpToTask(4)" class="px-2 py-1 text-xs bg-yellow-200 hover:bg-yellow-300 rounded">5</button>
+                        <button onclick="jumpToTask(5)" class="px-2 py-1 text-xs bg-yellow-200 hover:bg-yellow-300 rounded">6</button>
+                        <button onclick="jumpToTask(6)" class="px-2 py-1 text-xs bg-yellow-200 hover:bg-yellow-300 rounded">7</button>
+                        <button onclick="jumpToTask(7)" class="px-2 py-1 text-xs bg-yellow-200 hover:bg-yellow-300 rounded">8</button>
+                        <button onclick="jumpToTask(8)" class="px-2 py-1 text-xs bg-yellow-200 hover:bg-yellow-300 rounded">9</button>
+                        <button onclick="jumpToTask(9)" class="px-2 py-1 text-xs bg-yellow-200 hover:bg-yellow-300 rounded">10</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Excel Section -->
+        <main id="excel" class="bg-white p-6 rounded-lg shadow-md hidden">
+            <div id="excel-task-container" class="mb-6">
+                <!-- Wird von JavaScript gefüllt -->
+            </div>
+            
+            <!-- Excel-Simulator Grid -->
+            <table id="excelGrid" class="excel-grid w-full mb-4">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>A</th>
+                        <th>B</th>
+                        <th>C</th>
+                        <th>D</th>
+                        <th>E</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>1</th>
+                        <td contenteditable="true" id="A1"></td>
+                        <td contenteditable="true" id="B1"></td>
+                        <td contenteditable="true" id="C1"></td>
+                        <td contenteditable="true" id="D1"></td>
+                        <td contenteditable="true" id="E1"></td>
+                    </tr>
+                    <tr>
+                        <th>2</th>
+                        <td contenteditable="true" id="A2"></td>
+                        <td contenteditable="true" id="B2"></td>
+                        <td contenteditable="true" id="C2"></td>
+                        <td contenteditable="true" id="D2"></td>
+                        <td contenteditable="true" id="E2"></td>
+                    </tr>
+                    <tr>
+                        <th>3</th>
+                        <td contenteditable="true" id="A3"></td>
+                        <td contenteditable="true" id="B3"></td>
+                        <td contenteditable="true" id="C3"></td>
+                        <td contenteditable="true" id="D3"></td>
+                        <td contenteditable="true" id="E3"></td>
+                    </tr>
+                    <tr>
+                        <th>4</th>
+                        <td contenteditable="true" id="A4"></td>
+                        <td contenteditable="true" id="B4"></td>
+                        <td contenteditable="true" id="C4"></td>
+                        <td contenteditable="true" id="D4"></td>
+                        <td contenteditable="true" id="E4"></td>
+                    </tr>
+                    <tr>
+                        <th>5</th>
+                        <td contenteditable="true" id="A5"></td>
+                        <td contenteditable="true" id="B5"></td>
+                        <td contenteditable="true" id="C5"></td>
+                        <td contenteditable="true" id="D5"></td>
+                        <td contenteditable="true" id="E5"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Excel Aufgaben Controls -->
+            <div class="text-center">
+                <button onclick="calculateExcel()" id="excel-calculate-btn" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 mr-3">
+                    Berechnen
+                </button>
+                <button onclick="checkExcelTask()" id="excel-check-btn" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 mr-3">
+                    Aufgabe prüfen
+                </button>
+                <button onclick="nextExcelTask()" id="excel-next-btn" class="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700" style="display: none;">
+                    Nächste Aufgabe
+                </button>
+                <div id="excel-feedback" class="mt-3 text-center font-semibold"></div>
+                
+                <!-- Debug: Direkt zu Aufgabe springen -->
+                <div class="mt-4 p-3 bg-green-50 border border-green-200 rounded">
+                    <p class="text-sm text-gray-600 mb-2"><strong>TEST-Modus:</strong> Direkt zu Excel-Aufgabe springen:</p>
+                    <div class="flex flex-wrap gap-1 justify-center">
+                        <button onclick="jumpToExcelTask(0)" class="px-2 py-1 text-xs bg-green-200 hover:bg-green-300 rounded">1</button>
+                        <button onclick="jumpToExcelTask(1)" class="px-2 py-1 text-xs bg-green-200 hover:bg-green-300 rounded">2</button>
+                        <button onclick="jumpToExcelTask(2)" class="px-2 py-1 text-xs bg-green-200 hover:bg-green-300 rounded">3</button>
+                        <button onclick="jumpToExcelTask(3)" class="px-2 py-1 text-xs bg-green-200 hover:bg-green-300 rounded">4</button>
+                        <button onclick="jumpToExcelTask(4)" class="px-2 py-1 text-xs bg-green-200 hover:bg-green-300 rounded">5</button>
+                        <button onclick="jumpToExcelTask(5)" class="px-2 py-1 text-xs bg-green-200 hover:bg-green-300 rounded">6</button>
+                        <button onclick="jumpToExcelTask(6)" class="px-2 py-1 text-xs bg-green-200 hover:bg-green-300 rounded">7</button>
+                        <button onclick="jumpToExcelTask(7)" class="px-2 py-1 text-xs bg-green-200 hover:bg-green-300 rounded">8</button>
+                        <button onclick="jumpToExcelTask(8)" class="px-2 py-1 text-xs bg-green-200 hover:bg-green-300 rounded">9</button>
+                        <button onclick="jumpToExcelTask(9)" class="px-2 py-1 text-xs bg-green-200 hover:bg-green-300 rounded">10</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Hardware Section -->
+        <main id="hardware" class="bg-white p-6 rounded-lg shadow-md hidden">
+            <div class="aufgabe mb-6 p-4 bg-orange-50 border-l-4 border-orange-500 rounded-r-lg">
+                <h2 class="text-xl font-semibold mb-2 text-orange-800">Hardware-Grundlagen - Aufgabe 1</h2>
+                <p class="text-orange-700">Füllen Sie die gestrichelten Linien in der PDF-Seite 10.15 aus.</p>
+            </div>
+            
+            <div class="pdf-container relative bg-gray-50 p-4 rounded-lg shadow-inner">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Seite 10.15 - Hardware-Komponenten</h3>
+                    <p class="text-gray-600 mb-4">Betrachten Sie die PDF und füllen Sie die Eingabefelder entsprechend den gestrichelten Linien aus:</p>
+                </div>
+                
+                <!-- PDF-Screenshot als Bild -->
+                <div class="relative bg-gray-50 p-4 rounded-lg shadow-inner">
+                    <img src="1.jpg" alt="Hardware-Komponenten PDF Seite 10.15" class="w-full border rounded shadow-lg">
+                    
+                    <!-- Eingabefelder über dem Bild auf den schwarzen Strichen positioniert -->
+                    <div class="absolute top-0 left-0 right-0 bottom-0 pointer-events-none">
+                        <div class="relative h-full pointer-events-auto">
+                            <!-- Reihe 1: Kopfhörer, Mikrofon, Lautsprecher -->
+                            <input type="text" class="absolute bg-white border-2 border-gray-300 text-xs text-center outline-none focus:bg-yellow-100 focus:border-orange-400" 
+                                   style="top: 28.5%; left: 4.5%; width: 200px; height: 20px;" 
+                                   id="hardware_field_1">
+                            
+                            <input type="text" class="absolute bg-white border-2 border-gray-300 text-xs text-center outline-none focus:bg-yellow-100 focus:border-orange-400" 
+                                   style="top: 28.5%; left: 36.2%; width: 200px; height: 20px;" 
+                                   id="hardware_field_2">
+                            
+                            <input type="text" class="absolute bg-white border-2 border-gray-300 text-xs text-center outline-none focus:bg-yellow-100 focus:border-orange-400" 
+                                   style="top: 28.5%; left: 69%; width: 200px; height: 20px;" 
+                                   id="hardware_field_3">
+                            
+                            <!-- Reihe 2: Netzteil, Drucker, Festplatte -->
+                            <input type="text" class="absolute bg-white border-2 border-gray-300 text-xs text-center outline-none focus:bg-yellow-100 focus:border-orange-400" 
+                                   style="top: 46%; left: 4.5%; width: 200px; height: 20px;" 
+                                   id="hardware_field_4">
+                            
+                            <input type="text" class="absolute bg-white border-2 border-gray-300 text-xs text-center outline-none focus:bg-yellow-100 focus:border-orange-400" 
+                                   style="top: 46%; left: 36.2%; width: 200px; height: 20px;" 
+                                   id="hardware_field_5">
+                            
+                            <input type="text" class="absolute bg-white border-2 border-gray-300 text-xs text-center outline-none focus:bg-yellow-100 focus:border-orange-400" 
+                                   style="top: 46%; left: 69%; width: 200px; height: 20px;" 
+                                   id="hardware_field_6">
+                            
+                            <!-- Reihe 3: RAM, Mainboard, Grafikkarte -->
+                            <input type="text" class="absolute bg-white border-2 border-gray-300 text-xs text-center outline-none focus:bg-yellow-100 focus:border-orange-400" 
+                                   style="top: 67%; left: 4.5%; width: 200px; height: 20px;" 
+                                   id="hardware_field_7">
+                            
+                            <input type="text" class="absolute bg-white border-2 border-gray-300 text-xs text-center outline-none focus:bg-yellow-100 focus:border-orange-400" 
+                                   style="top: 67%; left: 36.2%; width: 200px; height: 20px;" 
+                                   id="hardware_field_8">
+                            
+                            <input type="text" class="absolute bg-white border-2 border-gray-300 text-xs text-center outline-none focus:bg-yellow-100 focus:border-orange-400" 
+                                   style="top: 67%; left: 69%; width: 200px; height: 20px;" 
+                                   id="hardware_field_9">
+                            
+                            <!-- Reihe 4: Weitere Hardware-Komponenten -->
+                            <input type="text" class="absolute bg-white border-2 border-gray-300 text-xs text-center outline-none focus:bg-yellow-100 focus:border-orange-400" 
+                                   style="top: 89.7%; left: 4.5%; width: 200px; height: 20px;" 
+                                   id="hardware_field_10">
+                            
+                            <input type="text" class="absolute bg-white border-2 border-gray-300 text-xs text-center outline-none focus:bg-yellow-100 focus:border-orange-400" 
+                                   style="top: 89.7%; left: 36.2%; width: 200px; height: 20px;" 
+                                   id="hardware_field_11">
+                            
+                            <input type="text" class="absolute bg-white border-2 border-gray-300 text-xs text-center outline-none focus:bg-yellow-100 focus:border-orange-400" 
+                                   style="top: 89.7%; left: 69%; width: 200px; height: 20px;" 
+                                   id="hardware_field_12">
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <!-- Buttons -->
+                <div class="mt-6 text-center">
+                    <button onclick="saveHardwareAnswers()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded mr-4 transition">
+                        💾 Antworten speichern
+                    </button>
+                    <button onclick="printHardwarePage()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded transition">
+                        🖨️ Drucken
+                    </button>
+                </div>
+                
+                <!-- Anweisungen -->
+                <div class="mt-6 bg-blue-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-blue-800 mb-2">📋 Anweisungen:</h4>
+                    <ul class="list-disc pl-6 text-blue-700 text-sm">
+                        <li>Betrachten Sie die PDF-Seite 10.15 oben</li>
+                        <li>Identifizieren Sie die Hardware-Komponenten</li>
+                        <li>Füllen Sie die Eingabefelder entsprechend den gestrichelten Linien aus</li>
+                        <li>Nutzen Sie die alternative Eingabe, falls die PDF nicht korrekt angezeigt wird</li>
+                        <li>Ihre Antworten werden automatisch im Browser gespeichert</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+
+        <!-- Shortcuts Section -->
+        <main id="shortcuts" class="bg-white p-6 rounded-lg shadow-md hidden">
+            <div class="aufgabe mb-6 p-4 bg-purple-50 border-l-4 border-purple-500 rounded-r-lg">
+                <h2 class="text-xl font-semibold mb-2 text-purple-800">Shortcuts-Grundlagen</h2>
+                <p class="text-purple-700">Lernen und üben Sie die wichtigsten Tastenkombinationen - erst das Quiz, dann die Praxis!</p>
+            </div>
+
+            <!-- Combined Quiz and Exercise -->
+            <div id="lesson-container" class="mb-8">
+                <!-- Quiz Section -->
+                <div id="shortcut-quiz" class="mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                    <h3 id="quiz-step-title" class="text-lg font-semibold mb-4 text-blue-800">Schritt 1: Quiz - Was macht dieser Shortcut?</h3>
+                    <div id="current-shortcut" class="text-2xl font-mono bg-white p-4 rounded border text-center mb-4">
+                        Strg + C
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <button onclick="checkAnswer(0)" class="quiz-option p-3 bg-blue-100 hover:bg-blue-200 rounded border cursor-pointer">
+                            Kopieren
+                        </button>
+                        <button onclick="checkAnswer(1)" class="quiz-option p-3 bg-blue-100 hover:bg-blue-200 rounded border cursor-pointer">
+                            Einfügen
+                        </button>
+                        <button onclick="checkAnswer(2)" class="quiz-option p-3 bg-blue-100 hover:bg-blue-200 rounded border cursor-pointer">
+                            Ausschneiden
+                        </button>
+                        <button onclick="checkAnswer(3)" class="quiz-option p-3 bg-blue-100 hover:bg-blue-200 rounded border cursor-pointer">
+                            Speichern
+                        </button>
+                    </div>
+                    <div id="quiz-result" class="text-center font-semibold mb-4"></div>
+                </div>
+
+                <!-- Practical Exercise Section -->
+                <div id="exercise-section" class="p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-r-lg" style="display: none;">
+                    <h3 id="exercise-step-title" class="text-lg font-semibold mb-4 text-yellow-800">Schritt 1: Praktische Übung</h3>
+                    <div id="exercise-area">
+                        <div id="current-exercise" class="mb-4 p-4 bg-white rounded border">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Debug: Direkt zu Aufgabe springen -->
+                <div class="mt-4 p-3 bg-purple-50 border border-purple-200 rounded">
+                    <p class="text-sm text-gray-600 mb-2"><strong>TEST-Modus:</strong> Direkt zu Shortcuts-Aufgabe springen:</p>
+                    <div class="flex flex-wrap gap-1 justify-center">
+                        <button onclick="jumpToShortcutTask(0)" class="px-2 py-1 text-xs bg-purple-200 hover:bg-purple-300 rounded">1</button>
+                        <button onclick="jumpToShortcutTask(1)" class="px-2 py-1 text-xs bg-purple-200 hover:bg-purple-300 rounded">2</button>
+                        <button onclick="jumpToShortcutTask(2)" class="px-2 py-1 text-xs bg-purple-200 hover:bg-purple-300 rounded">3</button>
+                        <button onclick="jumpToShortcutTask(3)" class="px-2 py-1 text-xs bg-purple-200 hover:bg-purple-300 rounded">4</button>
+                        <button onclick="jumpToShortcutTask(4)" class="px-2 py-1 text-xs bg-purple-200 hover:bg-purple-300 rounded">5</button>
+                        <button onclick="jumpToShortcutTask(5)" class="px-2 py-1 text-xs bg-purple-200 hover:bg-purple-300 rounded">6</button>
+                        <button onclick="jumpToShortcutTask(6)" class="px-2 py-1 text-xs bg-purple-200 hover:bg-purple-300 rounded">7</button>
+                        <button onclick="jumpToShortcutTask(7)" class="px-2 py-1 text-xs bg-purple-200 hover:bg-purple-300 rounded">8</button>
+                        <button onclick="jumpToShortcutTask(8)" class="px-2 py-1 text-xs bg-purple-200 hover:bg-purple-300 rounded">9</button>
+                        <button onclick="jumpToShortcutTask(9)" class="px-2 py-1 text-xs bg-purple-200 hover:bg-purple-300 rounded">10</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Explorer Section -->
+        <main id="explorer" class="bg-white p-6 rounded-lg shadow-md hidden">
+            <div class="aufgabe mb-6 p-4 bg-indigo-50 border-l-4 border-indigo-500 rounded-r-lg">
+                <h2 class="text-xl font-semibold mb-2 text-indigo-800">Explorer-Grundlagen</h2>
+                <p class="text-indigo-700">Lernen Sie die Grundlagen der Windows-Dateiverwaltung mit dem Explorer!</p>
+            </div>
+
+            <div id="explorer-task-container" class="mb-6">
+                <!-- Wird von JavaScript gefüllt -->
+            </div>
+
+            <div class="text-center">
+                <button onclick="checkExplorerTask()" id="explorer-check-btn" class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700">
+                    Aufgabe prüfen
+                </button>
+                <button onclick="nextExplorerTask()" id="explorer-next-btn" class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 ml-3" style="display: none;">
+                    Nächste Aufgabe
+                </button>
+                <div id="explorer-feedback" class="mt-3 text-center font-semibold"></div>
+                
+                <!-- Debug: Direkt zu Aufgabe springen -->
+                <div class="mt-4 p-3 bg-indigo-50 border border-indigo-200 rounded">
+                    <p class="text-sm text-gray-600 mb-2"><strong>TEST-Modus:</strong> Direkt zu Explorer-Aufgabe springen:</p>
+                    <div class="flex flex-wrap gap-1 justify-center">
+                        <button onclick="jumpToExplorerTask(0)" class="px-2 py-1 text-xs bg-indigo-200 hover:bg-indigo-300 rounded">1</button>
+                        <button onclick="jumpToExplorerTask(1)" class="px-2 py-1 text-xs bg-indigo-200 hover:bg-indigo-300 rounded">2</button>
+                        <button onclick="jumpToExplorerTask(2)" class="px-2 py-1 text-xs bg-indigo-200 hover:bg-indigo-300 rounded">3</button>
+                        <button onclick="jumpToExplorerTask(3)" class="px-2 py-1 text-xs bg-indigo-200 hover:bg-indigo-300 rounded">4</button>
+                        <button onclick="jumpToExplorerTask(4)" class="px-2 py-1 text-xs bg-indigo-200 hover:bg-indigo-300 rounded">5</button>
+                        <button onclick="jumpToExplorerTask(5)" class="px-2 py-1 text-xs bg-indigo-200 hover:bg-indigo-300 rounded">6</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="mt-8 flex justify-center space-x-4">
+                <button onclick="changeTab('word')" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 text-lg font-semibold">
+                    📝 Zu Word-Übungen
+                </button>
+                <button onclick="changeTab('excel')" class="bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 text-lg font-semibold">
+                    📊 Zu Excel-Übungen
+                </button>
+                <button onclick="changeTab('shortcuts')" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 text-lg font-semibold">
+                    ⌨️ Zu Shortcuts
+                </button>
+            </div>
+        </main>
+
+    </div>
+
+    <script>
+        // --- Tab Management ---
+        const tabs = document.querySelectorAll('.tab');
+        const contents = {
+            welcome: document.getElementById('welcome'),
+            word: document.getElementById('word'),
+            excel: document.getElementById('excel'),
+            shortcuts: document.getElementById('shortcuts'),
+            explorer: document.getElementById('explorer'),
+            hardware: document.getElementById('hardware')
+        };
+
+        function changeTab(tabName) {
+            // Hide all content including welcome
+            Object.values(contents).forEach(content => content.classList.add('hidden'));
+            
+            // Deactivate all tabs
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Show selected content and activate tab
+            if (tabName === 'welcome') {
+                contents.welcome.classList.remove('hidden');
+            } else {
+                contents[tabName].classList.remove('hidden');
+                document.querySelector(`.tab[onclick="changeTab('${tabName}')"]`).classList.add('active');
+            }
+        }
+
+        // --- Word Simulator Logic ---
+        function formatDoc(command, value = null) {
+            const editor = document.getElementById('editor');
+            
+            // Spezielle Behandlung für Listen
+            if (command === 'insertOrderedList' || command === 'insertUnorderedList') {
+                const selection = window.getSelection();
+                const selectedText = selection.toString();
+                
+                if (selectedText.length > 0) {
+                    // Text ist markiert - in Liste umwandeln
+                    const lines = selectedText.split('\n').filter(line => line.trim() !== '');
+                    const listType = command === 'insertOrderedList' ? 'ol' : 'ul';
+                    
+                    let listHTML = `<${listType}>`;
+                    lines.forEach(line => {
+                        listHTML += `<li>${line.trim()}</li>`;
+                    });
+                    listHTML += `</${listType}>`;
+                    
+                    // Markierten Text durch Liste ersetzen
+                    const range = selection.getRangeAt(0);
+                    range.deleteContents();
+                    const listElement = document.createElement('div');
+                    listElement.innerHTML = listHTML;
+                    range.insertNode(listElement.firstChild);
+                    selection.removeAllRanges();
+                } else {
+                    // Kein Text markiert - verwende execCommand
+                    document.execCommand(command, false, value);
+                }
+            } else {
+                // Für alle anderen Befehle verwende execCommand
+                document.execCommand(command, false, value);
+            }
+            
+            editor.focus();
+        }
+        
+        function makeList(listType) {
+            const editor = document.getElementById('editor');
+            editor.focus();
+            
+            // Direkte Methode: HTML an aktuelle Cursorposition einfügen
+            const listHTML = listType === 'ol' 
+                ? '<ol><li>Punkt 1</li><li>Punkt 2</li><li>Punkt 3</li></ol>' 
+                : '<ul><li>Punkt 1</li><li>Punkt 2</li><li>Punkt 3</li></ul>';
+            
+            // Mit innerHTML anhängen
+            const currentContent = editor.innerHTML;
+            editor.innerHTML = currentContent + '<br>' + listHTML;
+            
+            console.log('Liste hinzugefügt:', listType);
+            editor.focus();
+        }
+        
+        function showTableSelector() {
+            const selector = document.getElementById('table-selector');
+            const grid = document.getElementById('table-grid');
+            
+            // Grid erstellen (6x6 für Auswahl)
+            grid.innerHTML = '';
+            for (let row = 1; row <= 6; row++) {
+                for (let col = 1; col <= 6; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'w-4 h-4 border border-gray-400 cursor-pointer hover:bg-blue-200';
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+                    
+                    cell.addEventListener('mouseenter', () => highlightTableGrid(row, col));
+                    cell.addEventListener('click', () => insertTableWithSize(row, col));
+                    
+                    grid.appendChild(cell);
+                }
+            }
+            
+            // Selector anzeigen/verstecken
+            selector.classList.toggle('hidden');
+        }
+        
+        function highlightTableGrid(maxRow, maxCol) {
+            const cells = document.querySelectorAll('#table-grid div');
+            const preview = document.getElementById('table-preview');
+            
+            cells.forEach(cell => {
+                const row = parseInt(cell.dataset.row);
+                const col = parseInt(cell.dataset.col);
+                
+                if (row <= maxRow && col <= maxCol) {
+                    cell.classList.add('bg-blue-300');
+                    cell.classList.remove('bg-gray-100');
+                } else {
+                    cell.classList.remove('bg-blue-300');
+                    cell.classList.add('bg-gray-100');
+                }
+            });
+            
+            preview.textContent = `${maxCol} x ${maxRow} Tabelle`;
+        }
+        
+        function insertTableWithSize(rows, cols) {
+            const editor = document.getElementById('editor');
+            const selector = document.getElementById('table-selector');
+            
+            let tableHTML = '<br><table border="1" style="border-collapse: collapse; width: 100%; margin: 10px 0;">';
+            
+            for (let r = 1; r <= rows; r++) {
+                tableHTML += '<tr>';
+                for (let c = 1; c <= cols; c++) {
+                    tableHTML += `<td style="padding: 8px; border: 1px solid #ccc; min-width: 80px;" contenteditable="true">Zelle ${r},${c}</td>`;
+                }
+                tableHTML += '</tr>';
+            }
+            
+            tableHTML += '</table><br>';
+            
+            editor.innerHTML += tableHTML;
+            selector.classList.add('hidden');
+            
+            console.log(`Tabelle eingefügt: ${cols}x${rows}`);
+            editor.focus();
+        }
+        
+        // Klick außerhalb schließt Tabellen-Selector
+        document.addEventListener('click', function(event) {
+            const selector = document.getElementById('table-selector');
+            const button = event.target.closest('button[onclick="showTableSelector()"]');
+            
+            if (!button && !selector.contains(event.target)) {
+                selector.classList.add('hidden');
+            }
+        });
+        
+        function showColumnSelector() {
+            const selector = document.getElementById('column-selector');
+            selector.classList.toggle('hidden');
+        }
+        
+        function insertColumnsWithCount(columnCount) {
+            const editor = document.getElementById('editor');
+            const selector = document.getElementById('column-selector');
+            
+            // Aktuellen Text des Editors holen
+            const currentText = editor.innerText || editor.textContent || '';
+            const words = currentText.trim().split(/\s+/).filter(word => word.length > 0);
+            
+            // Text in Spalten aufteilen
+            const wordsPerColumn = Math.ceil(words.length / columnCount);
+            const textColumns = [];
+            
+            for (let i = 0; i < columnCount; i++) {
+                const startIndex = i * wordsPerColumn;
+                const endIndex = Math.min(startIndex + wordsPerColumn, words.length);
+                const columnWords = words.slice(startIndex, endIndex);
+                textColumns.push(columnWords.join(' '));
+            }
+            
+            let columnsHTML = `<br><div style="display: flex; gap: 15px; margin: 10px 0; min-height: 200px;">`;
+            
+            for (let i = 1; i <= columnCount; i++) {
+                const columnText = textColumns[i-1] || `Spalte ${i} - Hier können Sie Text eingeben.`;
+                columnsHTML += `
+                    <div style="flex: 1; border: 1px solid #ddd; padding: 10px; background: #fafafa;" contenteditable="true">
+                        <div style="color: #333; line-height: 1.5;">${columnText}</div>
+                    </div>
+                `;
+            }
+            
+            columnsHTML += `</div><br>`;
+            
+            // Editor Inhalt ersetzen (nicht anhängen)
+            editor.innerHTML = columnsHTML;
+            selector.classList.add('hidden');
+            
+            console.log(`${columnCount} Spalten erstellt mit aufgeteiltem Text`);
+            editor.focus();
+        }
+        
+        function insertSpecialChar() {
+            const editor = document.getElementById('editor');
+            
+            // Auswahl von Sonderzeichen
+            const specialChars = [
+                '©', '®', '™', '€', '£', '¥', '§', '°', '±', '×', '÷',
+                'α', 'β', 'γ', 'π', 'Ω', '∞', '≈', '≠', '≤', '≥',
+                '→', '←', '↑', '↓', '↔', '⇒', '⇐', '⇔',
+                '♠', '♣', '♥', '♦', '★', '☆', '♪', '♫', '☀', '☁', '⚡'
+            ];
+            
+            // Zufälliges Sonderzeichen auswählen
+            const randomChar = specialChars[Math.floor(Math.random() * specialChars.length)];
+            
+            // Sonderzeichen an Cursorposition einfügen
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                const textNode = document.createTextNode(randomChar);
+                range.insertNode(textNode);
+                
+                // Cursor nach dem eingefügten Zeichen positionieren
+                range.setStartAfter(textNode);
+                range.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } else {
+                // Fallback: Am Ende anhängen
+                editor.innerHTML += randomChar;
+            }
+            
+            console.log('Sonderzeichen eingefügt:', randomChar);
+            editor.focus();
+        }
+        
+        // Klick außerhalb schließt alle Selectors
+        document.addEventListener('click', function(event) {
+            const tableSelector = document.getElementById('table-selector');
+            const columnSelector = document.getElementById('column-selector');
+            const effectsSelector = document.getElementById('effects-selector');
+            
+            const tableButton = event.target.closest('button[onclick="showTableSelector()"]');
+            const columnButton = event.target.closest('button[onclick="showColumnSelector()"]');
+            const effectsButton = event.target.closest('button[onclick="showEffectsSelector()"]');
+            
+            if (!tableButton && !tableSelector.contains(event.target)) {
+                tableSelector.classList.add('hidden');
+            }
+            
+            if (!columnButton && !columnSelector.contains(event.target)) {
+                columnSelector.classList.add('hidden');
+            }
+            
+            if (!effectsButton && !effectsSelector.contains(event.target)) {
+                effectsSelector.classList.add('hidden');
+            }
+        });
+        
+        function showTextColorOK() {
+            document.getElementById('textColorOK').style.display = 'inline-block';
+            // Anderen OK-Button verstecken
+            document.getElementById('bgColorOK').style.display = 'none';
+        }
+        
+        function showBgColorOK() {
+            document.getElementById('bgColorOK').style.display = 'inline-block';
+            // Anderen OK-Button verstecken
+            document.getElementById('textColorOK').style.display = 'none';
+        }
+        
+        function applySelectedTextColor() {
+            const color = document.getElementById('textColorPicker').value;
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0 && selection.toString().length > 0) {
+                document.execCommand('foreColor', false, color);
+                console.log('Applied text color:', color);
+                // OK-Button nach Anwendung verstecken
+                document.getElementById('textColorOK').style.display = 'none';
+            } else {
+                alert('Bitte markieren Sie zuerst den Text, den Sie einfärben möchten!');
+            }
+            document.getElementById('editor').focus();
+        }
+        
+        function applySelectedBackgroundColor() {
+            const color = document.getElementById('bgColorPicker').value;
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0 && selection.toString().length > 0) {
+                document.execCommand('backColor', false, color);
+                console.log('Applied background color:', color);
+                // OK-Button nach Anwendung verstecken
+                document.getElementById('bgColorOK').style.display = 'none';
+            } else {
+                alert('Bitte markieren Sie zuerst den Text, den Sie markieren möchten!');
+            }
+            document.getElementById('editor').focus();
+        }
+
+        // Bild einfügen
+        function insertImage() {
+            const file = document.getElementById('imageInput').files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.width = '300px';
+                    img.style.height = '200px';
+                    img.style.margin = '10px';
+                    img.style.border = '2px solid #ddd';
+                    img.style.borderRadius = '5px';
+                    img.style.cursor = 'move';
+                    img.style.position = 'relative';
+                    img.style.display = 'inline-block';
+                    img.onclick = function() { selectImage(this); };
+                    img.ondblclick = function() { showImageSizeDialog(this); };
+                    
+                    // Mache Bild verschiebbar und vergrößerbar
+                    makeDraggable(img);
+                    makeResizable(img);
+                    
+                    // Bild am Cursor einfügen
+                    const selection = window.getSelection();
+                    if (selection.rangeCount > 0) {
+                        const range = selection.getRangeAt(0);
+                        range.deleteContents();
+                        range.insertNode(img);
+                    } else {
+                        document.getElementById('editor').appendChild(img);
+                    }
+                    
+                    document.getElementById('editor').focus();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        // Zeigt Dialog für genaue Bildgrößen-Eingabe
+        function showImageSizeDialog(img) {
+            // Aktuelle Größe ermitteln
+            const currentWidth = parseInt(img.style.width) || img.offsetWidth;
+            const currentHeight = parseInt(img.style.height) || img.offsetHeight;
+            
+            // Dialog mit Eingabefeldern
+            const newWidth = prompt(`Bildbreite eingeben (aktuell: ${currentWidth}px):\n\nTipp: Zielgröße ist 200px breit`, currentWidth);
+            if (newWidth && !isNaN(newWidth) && newWidth > 0) {
+                const newHeight = prompt(`Bildhöhe eingeben (aktuell: ${currentHeight}px):\n\nTipp: Zielgröße ist 150px hoch`, currentHeight);
+                if (newHeight && !isNaN(newHeight) && newHeight > 0) {
+                    // Neue Größe anwenden
+                    img.style.width = newWidth + 'px';
+                    img.style.height = newHeight + 'px';
+                    
+                    console.log(`Bildgröße geändert auf: ${newWidth}x${newHeight}px`);
+                    
+                    // Kurz grünen Rahmen zeigen als Bestätigung
+                    const originalBorder = img.style.border;
+                    img.style.border = '3px solid #10b981';
+                    setTimeout(() => {
+                        img.style.border = originalBorder;
+                    }, 1000);
+                }
+            }
+        }
+        
+        // Macht ein Bild verschiebbar per Drag & Drop
+        function makeDraggable(img) {
+            let isDragging = false;
+            let dragStartX = 0;
+            let dragStartY = 0;
+            let imgStartLeft = 0;
+            let imgStartTop = 0;
+            
+            img.addEventListener('mousedown', function(e) {
+                // Nur ziehen wenn nicht am Resize-Handle (rechte untere Ecke)
+                const rect = img.getBoundingClientRect();
+                const offsetX = e.clientX - rect.left;
+                const offsetY = e.clientY - rect.top;
+                
+                // Nicht draggen wenn am Resize-Handle (letzten 10px)
+                if (offsetX > rect.width - 10 && offsetY > rect.height - 10) {
+                    return; // Lass Resize-Funktion übernehmen
+                }
+                
+                isDragging = true;
+                dragStartX = e.clientX;
+                dragStartY = e.clientY;
+                
+                // Aktuelle Position des Bildes
+                const computedStyle = window.getComputedStyle(img);
+                imgStartLeft = parseInt(computedStyle.left) || 0;
+                imgStartTop = parseInt(computedStyle.top) || 0;
+                
+                img.style.cursor = 'grabbing';
+                img.style.zIndex = '1000';
+                e.preventDefault();
+            });
+            
+            document.addEventListener('mousemove', function(e) {
+                if (isDragging) {
+                    const deltaX = e.clientX - dragStartX;
+                    const deltaY = e.clientY - dragStartY;
+                    
+                    const newLeft = imgStartLeft + deltaX;
+                    const newTop = imgStartTop + deltaY;
+                    
+                    img.style.left = newLeft + 'px';
+                    img.style.top = newTop + 'px';
+                    img.style.position = 'relative';
+                }
+            });
+            
+            document.addEventListener('mouseup', function() {
+                if (isDragging) {
+                    isDragging = false;
+                    img.style.cursor = 'move';
+                    img.style.zIndex = 'auto';
+                }
+            });
+        }
+        
+        // Macht ein Bild durch Ziehen vergrößerbar
+        function makeResizable(img) {
+            let isResizing = false;
+            let startX, startY, startWidth, startHeight;
+            
+            // Füge Resize-Handle hinzu (unsichtbar, aber funktional)
+            img.addEventListener('mousedown', function(e) {
+                // Nur wenn am Rand geklickt wird (letzten 10px)
+                const rect = img.getBoundingClientRect();
+                const offsetX = e.clientX - rect.left;
+                const offsetY = e.clientY - rect.top;
+                
+                if (offsetX > rect.width - 10 && offsetY > rect.height - 10) {
+                    isResizing = true;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    startWidth = parseInt(window.getComputedStyle(img).width, 10);
+                    startHeight = parseInt(window.getComputedStyle(img).height, 10);
+                    
+                    img.style.cursor = 'se-resize';
+                    e.preventDefault();
+                }
+            });
+            
+            document.addEventListener('mousemove', function(e) {
+                if (isResizing) {
+                    const newWidth = startWidth + (e.clientX - startX);
+                    const newHeight = startHeight + (e.clientY - startY);
+                    
+                    if (newWidth > 50 && newHeight > 50) {
+                        img.style.width = newWidth + 'px';
+                        img.style.height = newHeight + 'px';
+                    }
+                }
+            });
+            
+            document.addEventListener('mouseup', function() {
+                if (isResizing) {
+                    isResizing = false;
+                    img.style.cursor = 'move';
+                }
+            });
+        }
+
+        let selectedImage = null;
+
+        function selectImage(img) {
+            // Alle Bilder deselektieren
+            const allImages = document.querySelectorAll('#editor img');
+            allImages.forEach(image => {
+                image.style.border = '2px solid #ddd';
+                image.style.boxShadow = 'none';
+            });
+            
+            // Aktuelles Bild selektieren
+            img.style.border = '3px solid #3b82f6';
+            img.style.boxShadow = '0 0 10px rgba(59, 130, 246, 0.5)';
+            selectedImage = img;
+        }
+
+        function resizeSelectedImage(size) {
+            if (!selectedImage) {
+                alert('Bitte klicken Sie zuerst auf ein Bild um es auszuwählen!');
+                return;
+            }
+            
+            switch(size) {
+                case 'target':
+                    selectedImage.style.width = '200px';
+                    selectedImage.style.height = '150px';
+                    break;
+                case 'small':
+                    selectedImage.style.width = '150px';
+                    selectedImage.style.height = '100px';
+                    break;
+                case 'large':
+                    selectedImage.style.width = '400px';
+                    selectedImage.style.height = '300px';
+                    break;
+            }
+            
+            document.getElementById('editor').focus();
+        }
+
+        // Keyboard shortcuts für Word
+        document.addEventListener('keydown', function(e) {
+            if (document.getElementById('editor').contains(document.activeElement)) {
+                if (e.ctrlKey) {
+                    switch(e.key.toLowerCase()) {
+                        case 'b':
+                            e.preventDefault();
+                            formatDoc('bold');
+                            break;
+                        case 'i':
+                            e.preventDefault();
+                            formatDoc('italic');
+                            break;
+                        case 'u':
+                            e.preventDefault();
+                            formatDoc('underline');
+                            break;
+                    }
+                }
+            }
+        });
+
+        // --- Word Tasks Logic ---
+        const wordTasks = [
+            {
+                title: "1. Überschrift formatieren",
+                instruction: "Erstellen Sie eine <strong>Überschrift</strong> (H1/H2/H3) und <u>unterstreichen</u> Sie diese",
+                checkFunction: function() {
+                    const content = document.getElementById('editor').innerHTML;
+                    console.log('Content:', content);
+                    
+                    // Prüfe auf Überschriften
+                    const hasHeading = content.includes('<h1') || content.includes('<h2') || content.includes('<h3');
+                    console.log('Has heading:', hasHeading);
+                    
+                    // Prüfe auf unterstrichen
+                    const hasUnderline = content.includes('<u>') || content.includes('<u ') ||
+                                        content.includes('text-decoration: underline') || content.includes('text-decoration:underline') ||
+                                        content.includes('text-decoration-line: underline') || content.includes('text-decoration-line:underline');
+                    console.log('Has underline:', hasUnderline);
+                    
+                    // Prüfe ob eine Überschrift unterstrichen ist
+                    const headingElements = document.querySelectorAll('#editor h1, #editor h2, #editor h3');
+                    let hasUnderlinedHeading = false;
+                    
+                    headingElements.forEach(heading => {
+                        const headingHTML = heading.outerHTML;
+                        const isHeadingUnderlined = headingHTML.includes('<u>') || headingHTML.includes('<u ') ||
+                                                   headingHTML.includes('text-decoration: underline') || headingHTML.includes('text-decoration:underline') ||
+                                                   window.getComputedStyle(heading).textDecoration.includes('underline');
+                        
+                        if (isHeadingUnderlined) {
+                            hasUnderlinedHeading = true;
+                        }
+                    });
+                    
+                    console.log('Has underlined heading:', hasUnderlinedHeading);
+                    
+                    return hasHeading && (hasUnderline || hasUnderlinedHeading);
+                },
+                successMessage: "✓ Perfekt! Sie haben eine unterstrichene Überschrift erstellt.",
+                failMessage: "✗ Erstellen Sie eine Überschrift (H1/H2/H3) und unterstreichen Sie diese."
+            },
+            {
+                title: "2. Schriftart und Schriftgröße",
+                instruction: "Ändern Sie die <strong>Schriftart</strong> und vergrößern Sie die <strong>Schriftgröße</strong> von einem Text",
+                checkFunction: function() {
+                    const content = document.getElementById('editor').innerHTML;
+                    console.log('Content for task 2:', content);
+                    
+                    // Prüfe auf Schriftart
+                    const hasFontFamily = content.includes('font-family') || content.includes('fontFamily') || 
+                                         content.includes('Arial') || content.includes('Times') || content.includes('Helvetica') ||
+                                         content.includes('Georgia') || content.includes('Verdana');
+                    console.log('Has font family:', hasFontFamily);
+                    
+                    // Prüfe auf Schriftgröße (auch große HTML-Font-Sizes)
+                    const hasFontSize = content.includes('font-size') || content.includes('fontSize') || 
+                                       content.includes('<font size') || content.includes('size="4"') || 
+                                       content.includes('size="5"') || content.includes('size="6"') || 
+                                       content.includes('size="7"') || content.includes('size=4') ||
+                                       content.includes('size=5') || content.includes('size=6') || content.includes('size=7');
+                    console.log('Has font size:', hasFontSize);
+                    
+                    return hasFontFamily && hasFontSize;
+                },
+                successMessage: "✓ Sehr gut! Sie haben Schriftart und -größe geändert.",
+                failMessage: "✗ Markieren Sie den Text und ändern Sie sowohl Schriftart als auch Schriftgröße über die Dropdowns."
+            },
+            {
+                title: "3. Text einfärben",
+                instruction: "Markieren Sie den <strong>ersten Text</strong> und färben Sie ihn mit dem <strong>Textfarbe-Wähler</strong> ein. Dann markieren Sie den <strong>zweiten Text</strong> und markieren Sie ihn <span style='background-color: yellow;'>gelb</span> mit dem <strong>Markier-Wähler</strong>.",
+                checkFunction: function() {
+                    const content = document.getElementById('editor').innerHTML;
+                    console.log('Content for task 3:', content);
+                    
+                    // Prüfe auf Textfarbe (verschiedene Formate)
+                    const hasTextColor = content.includes('color:') || content.includes('color ') ||
+                                        content.includes('rgb(') || content.includes('#') && (content.includes('span') || content.includes('font'));
+                    console.log('Has text color:', hasTextColor);
+                    
+                    // Prüfe auf Hintergrundfarbe/Markierung (verschiedene Formate)  
+                    const hasBackground = content.includes('background-color') || content.includes('backgroundColor') ||
+                                         content.includes('background:') || content.includes('highlight');
+                    console.log('Has background:', hasBackground);
+                    
+                    return hasTextColor && hasBackground;
+                },
+                successMessage: "✓ Fantastisch! Sie haben Text eingefärbt und markiert.",
+                failMessage: "✗ Markieren Sie Text und verwenden Sie die Farbwähler: 1) Textfarbe für den ersten Text, 2) Markier-Wähler (gelb) für den zweiten Text."
+            },
+            {
+                title: "4. Bild einfügen und anpassen",
+                instruction: "Fügen Sie ein <strong>Bild</strong> ein, <strong>verschieben</strong> Sie es im Arbeitsbereich und passen Sie es an die <strong>Zielgröße</strong> an (Verschieben: ziehen am Bild, Größe: ziehen an der Ecke, Buttons oder <strong>Doppelklick</strong> für genaue Pixel-Eingabe)",
+                checkFunction: function() {
+                    const images = document.querySelectorAll('#editor img');
+                    if (images.length === 0) return false;
+                    
+                    // Prüfen ob mindestens ein Bild die Zielgröße erreicht hat (200x150px ±20px Toleranz)
+                    for (let img of images) {
+                        const rect = img.getBoundingClientRect();
+                        const width = rect.width;
+                        const height = rect.height;
+                        console.log('Image dimensions:', width, 'x', height);
+                        
+                        // Zielgröße: 200x150px mit Toleranz von ±20px
+                        if (width >= 180 && width <= 220 && height >= 130 && height <= 170) {
+                            return true;
+                        }
+                    }
+                    return false;
+                },
+                successMessage: "✓ Hervorragend! Sie haben ein Bild eingefügt und auf die richtige Größe angepasst.",
+                failMessage: "✗ Fügen Sie ein Bild ein und passen Sie es an die gezeigte Zielgröße an (200x150px). Sie können an den Ecken ziehen oder die Größen-Buttons verwenden."
+            },
+            {
+                title: "5. Listen erstellen",
+                instruction: "Erstellen Sie eine <strong>Aufzählung</strong> (• Liste) oder <strong>nummerierte Liste</strong> (1. Liste) mit mindestens 3 Einträgen",
+                checkFunction: function() {
+                    const content = document.getElementById('editor').innerHTML;
+                    console.log('Liste Content:', content);
+                    
+                    const hasUnorderedList = content.includes('<ul>') && content.includes('<li>');
+                    const hasOrderedList = content.includes('<ol>') && content.includes('<li>');
+                    const listItems = document.querySelectorAll('#editor li');
+                    
+                    console.log('Has UL:', hasUnorderedList, 'Has OL:', hasOrderedList, 'List items:', listItems.length);
+                    
+                    return (hasUnorderedList || hasOrderedList) && listItems.length >= 3;
+                },
+                successMessage: "✓ Ausgezeichnet! Sie haben eine Liste mit mehreren Einträgen erstellt.",
+                failMessage: "✗ Markieren Sie die 3 Textzeilen und klicken Sie auf den Listen-Button (• Liste oder 1. Liste)."
+            },
+            {
+                title: "6. Text ausrichten",
+                instruction: "Richten Sie die drei Textzeilen unterschiedlich aus: <strong>links</strong>, <strong>zentriert</strong> und <strong>rechts</strong>",
+                checkFunction: function() {
+                    const content = document.getElementById('editor').innerHTML;
+                    console.log('Alignment Content:', content);
+                    
+                    const hasLeft = content.includes('text-align: left') || content.includes('text-align:left') || content.includes('justifyLeft');
+                    const hasCenter = content.includes('text-align: center') || content.includes('text-align:center') || content.includes('justifyCenter');
+                    const hasRight = content.includes('text-align: right') || content.includes('text-align:right') || content.includes('justifyRight');
+                    
+                    console.log('Has Left:', hasLeft, 'Has Center:', hasCenter, 'Has Right:', hasRight);
+                    
+                    // Zähle verschiedene Ausrichtungen
+                    let alignmentCount = 0;
+                    if (hasLeft) alignmentCount++;
+                    if (hasCenter) alignmentCount++;
+                    if (hasRight) alignmentCount++;
+                    
+                    return alignmentCount >= 2; // Mindestens 2 verschiedene Ausrichtungen
+                },
+                successMessage: "✓ Perfekt! Sie haben Text in verschiedenen Ausrichtungen formatiert.",
+                failMessage: "✗ Markieren Sie nacheinander die 3 Zeilen und verwenden Sie die Ausrichtungs-Buttons (◀ ▬ ▶)."
+            },
+            {
+                title: "7. Tabelle einfügen",
+                instruction: "Fügen Sie eine <strong>Tabelle</strong> ein und bearbeiten Sie die Zellen",
+                checkFunction: function() {
+                    const content = document.getElementById('editor').innerHTML;
+                    console.log('Tabelle Content:', content);
+                    
+                    const hasTable = content.includes('<table') && content.includes('<tr') && content.includes('<td');
+                    const tableElements = document.querySelectorAll('#editor table');
+                    
+                    console.log('Has Table:', hasTable, 'Table count:', tableElements.length);
+                    
+                    return hasTable && tableElements.length > 0;
+                },
+                successMessage: "✓ Ausgezeichnet! Sie haben eine Tabelle eingefügt.",
+                failMessage: "✗ Klicken Sie auf den 📊 Tabelle Button um eine Tabelle einzufügen."
+            },
+            {
+                title: "8. Spalten erstellen",
+                instruction: "Erstellen Sie ein <strong>Spalten-Layout</strong> für Ihren Text",
+                checkFunction: function() {
+                    const content = document.getElementById('editor').innerHTML;
+                    console.log('Spalten Content:', content);
+                    
+                    const hasColumns = content.includes('column') || content.includes('flex') || content.includes('grid') || 
+                                     content.includes('float') || content.includes('display: flex') || content.includes('columns:');
+                    
+                    console.log('Has Columns:', hasColumns);
+                    
+                    return hasColumns;
+                },
+                successMessage: "✓ Prima! Sie haben ein Spalten-Layout erstellt.",
+                failMessage: "✗ Klicken Sie auf ▌▌ Spalten um ein Spalten-Layout zu erstellen."
+            },
+            {
+                title: "9. Texteffekte anwenden",
+                instruction: "Markieren Sie Text und wenden Sie <strong>Texteffekte</strong> an (Schatten, Glow, etc.)",
+                checkFunction: function() {
+                    const content = document.getElementById('editor').innerHTML;
+                    console.log('Texteffekte Content:', content);
+                    
+                    const hasTextShadow = content.includes('text-shadow') || content.includes('textShadow');
+                    const hasTextStroke = content.includes('text-stroke') || content.includes('textStroke');
+                    const hasEffects = hasTextShadow || hasTextStroke;
+                    
+                    console.log('Has text effects:', hasEffects);
+                    
+                    return hasEffects;
+                },
+                successMessage: "✓ Fantastisch! Sie haben Texteffekte angewendet.",
+                failMessage: "✗ Markieren Sie Text und klicken Sie auf ✨ Effekt um Texteffekte anzuwenden."
+            },
+            {
+                title: "10. Sonderzeichen einfügen",
+                instruction: "Fügen Sie <strong>Sonderzeichen</strong> in Ihren Text ein",
+                checkFunction: function() {
+                    const content = document.getElementById('editor').innerHTML;
+                    console.log('Sonderzeichen Content:', content);
+                    
+                    // Prüfe auf verschiedene Sonderzeichen
+                    const hasSpecialChars = content.includes('©') || content.includes('®') || content.includes('™') || 
+                                          content.includes('€') || content.includes('§') || content.includes('°') ||
+                                          content.includes('±') || content.includes('×') || content.includes('÷') ||
+                                          content.includes('α') || content.includes('β') || content.includes('π') ||
+                                          content.includes('→') || content.includes('←') || content.includes('↑') ||
+                                          content.includes('♠') || content.includes('♣') || content.includes('♥') ||
+                                          content.includes('★') || content.includes('☆') || content.includes('♪');
+                    
+                    console.log('Has special characters:', hasSpecialChars);
+                    
+                    return hasSpecialChars;
+                },
+                successMessage: "✓ Ausgezeichnet! Sie haben Sonderzeichen eingefügt.",
+                failMessage: "✗ Klicken Sie auf © Symbol um Sonderzeichen einzufügen."
+            }
+        ];
+
+        let currentWordTaskIndex = 0;
+
+        function loadWordTask(index) {
+            const task = wordTasks[index];
+            const container = document.getElementById('word-task-container');
+            
+            container.innerHTML = `
+                <div class="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                    <h2 class="text-xl font-semibold mb-2 text-blue-800">${task.title}</h2>
+                    <p class="text-blue-700">${task.instruction}</p>
+                </div>
+            `;
+            
+            document.getElementById('word-feedback').textContent = '';
+            document.getElementById('word-check-btn').style.display = 'inline-block';
+            document.getElementById('word-next-btn').style.display = 'none';
+        }
+
+        function checkWordTask() {
+            const task = wordTasks[currentWordTaskIndex];
+            const feedback = document.getElementById('word-feedback');
+            
+            if (task.checkFunction()) {
+                feedback.innerHTML = `<span class="text-green-600">${task.successMessage}</span>`;
+                document.getElementById('word-check-btn').style.display = 'none';
+                document.getElementById('word-next-btn').style.display = 'inline-block';
+            } else {
+                feedback.innerHTML = `<span class="text-red-600">${task.failMessage}</span>`;
+            }
+        }
+
+        function nextWordTask() {
+            currentWordTaskIndex++;
+            
+            if (currentWordTaskIndex >= wordTasks.length) {
+                showWordCongratulations();
+                return;
+            }
+            
+            loadWordTask(currentWordTaskIndex);
+            // Editor für nächste Aufgabe mit passendem Text füllen
+            const placeholderTexts = [
+                'Meine erste Überschrift', // Für Überschrift-Aufgabe (Index 0)
+                'Dieser Text soll formatiert werden.', // Für Schriftart/Schriftgröße (Index 1)
+                'Erster Text zum Einfärben.\n\nZweiter Text zum Markieren.', // Für Farb-Aufgabe
+                'Fügen Sie hier ein Bild ein und passen Sie es an die Zielgröße an:<br><br><div style="width:200px; height:150px; border:3px dashed #007acc; background-color:#f0f8ff; display:inline-block; text-align:center; line-height:150px; font-weight:bold; color:#007acc; margin:20px;">ZIELGRÖSSE<br>200 x 150 px</div>', // Für Bild-Aufgabe
+                'Punkt 1\nPunkt 2\nPunkt 3', // Für Listen-Aufgabe
+                'Rechts<br>Zentriert<br>Links', // Für Ausrichtung-Aufgabe
+                'Hier kommt eine Tabelle hin.', // Für Tabelle-Aufgabe
+                'Dieser Text wird in Spalten aufgeteilt. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', // Für Spalten-Aufgabe
+                'Dieser Text bekommt Effekte', // Für Texteffekte-Aufgabe
+                'Hier werden Sonderzeichen eingefügt', // Für Sonderzeichen-Aufgabe
+                'Besuchen Sie unsere Website', // Für Hyperlink-Aufgabe
+                'Dokumentinhalt mit Kopf- und Fußzeile' // Für Kopf-/Fußzeile-Aufgabe
+            ];
+            
+            const placeholderText = placeholderTexts[currentWordTaskIndex] || 'Beginnen Sie hier zu schreiben...';
+            document.getElementById('editor').innerHTML = placeholderText;
+        }
+
+        function showWordCongratulations() {
+            const container = document.getElementById('word-task-container');
+            container.innerHTML = `
+                <div class="text-center p-8 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border-2 border-green-500">
+                    <div class="text-6xl mb-4">🎉</div>
+                    <h2 class="text-3xl font-bold text-green-800 mb-4">Herzlichen Glückwunsch!</h2>
+                    <p class="text-xl text-green-700 mb-6">Sie haben alle ${wordTasks.length} Word-Aufgaben erfolgreich abgeschlossen!</p>
+                    
+                    <div class="bg-white p-4 rounded-lg shadow-md mb-6">
+                        <h3 class="text-lg font-semibold mb-3 text-gray-800">Sie können jetzt:</h3>
+                        <div class="grid grid-cols-1 gap-2 text-sm text-left max-w-md mx-auto">
+                            <div class="p-2 bg-gray-50 rounded">✓ Überschriften formatieren (fett & unterstrichen)</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ Schriftart und Schriftgröße ändern</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ Text einfärben und markieren</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ Bilder einfügen und die Größe anpassen</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ Listen und Aufzählungen erstellen</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ Text ausrichten (links, zentriert, rechts)</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ Tabellen einfügen und bearbeiten</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ Spalten-Layout erstellen</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ Texteffekte (Schatten, Glow, 3D)</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ Sonderzeichen einfügen</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ Hyperlinks erstellen</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ Kopf- und Fußzeilen hinzufügen</div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <button onclick="restartWordTasks()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 text-lg font-semibold">
+                            🔄 Nochmal üben
+                        </button>
+                        <br>
+                        <button onclick="changeTab('excel')" class="bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 text-lg font-semibold">
+                            📊 Zu Excel-Übungen
+                        </button>
+                        <button onclick="changeTab('shortcuts')" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 text-lg font-semibold ml-3">
+                            ⌨️ Zu Shortcuts
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('word-check-btn').style.display = 'none';
+            document.getElementById('word-next-btn').style.display = 'none';
+            document.getElementById('word-feedback').textContent = '';
+        }
+
+        function restartWordTasks() {
+            currentWordTaskIndex = 0;
+            loadWordTask(0);
+            document.getElementById('editor').innerHTML = 'Meine erste Überschrift';
+        }
+        
+        // DEBUG: Direkt zu einer Aufgabe springen
+        function jumpToTask(taskIndex) {
+            if (taskIndex >= 0 && taskIndex < wordTasks.length) {
+                currentWordTaskIndex = taskIndex;
+                loadWordTask(taskIndex);
+                
+                // Editor mit passendem Text füllen
+                const placeholderTexts = [
+                    'Meine erste Überschrift', // Für Überschrift-Aufgabe (Index 0)
+                    'Dieser Text soll formatiert werden.', // Für Schriftart/Schriftgröße (Index 1)
+                    'Erster Text zum Einfärben.\n\nZweiter Text zum Markieren.', // Für Farb-Aufgabe
+                    'Fügen Sie hier ein Bild ein und passen Sie es an die Zielgröße an:<br><br><div style="width:200px; height:150px; border:3px dashed #007acc; background-color:#f0f8ff; display:inline-block; text-align:center; line-height:150px; font-weight:bold; color:#007acc; margin:20px;">ZIELGRÖSSE<br>200 x 150 px</div>', // Für Bild-Aufgabe
+                    'Punkt 1\nPunkt 2\nPunkt 3', // Für Listen-Aufgabe
+                    'Rechts<br>Zentriert<br>Links', // Für Ausrichtung-Aufgabe
+                    'Hier kommt eine Tabelle hin.', // Für Tabelle-Aufgabe
+                    'Dieser Text wird in Spalten aufgeteilt. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', // Für Spalten-Aufgabe
+                    'Dieser Text bekommt Effekte', // Für Texteffekte-Aufgabe
+                    'Hier werden Sonderzeichen eingefügt', // Für Sonderzeichen-Aufgabe
+                    'Besuchen Sie unsere Website', // Für Hyperlink-Aufgabe
+                    'Dokumentinhalt mit Kopf- und Fußzeile' // Für Kopf-/Fußzeile-Aufgabe
+                ];
+                
+                const placeholderText = placeholderTexts[taskIndex] || 'Beginnen Sie hier zu schreiben...';
+                document.getElementById('editor').innerHTML = placeholderText;
+                
+                console.log(`Gesprungen zu Aufgabe ${taskIndex + 1}: ${wordTasks[taskIndex].title}`);
+            }
+        }
+
+        // --- Excel Simulator Logic ---
+        const excelTasks = [
+            {
+                title: "1. Einfache Addition",
+                instruction: "Tragen Sie in A1=<strong>10</strong>, B1=<strong>20</strong>, C1=<strong>30</strong> ein und erstellen Sie in D1 die Formel <strong>=A1+B1+C1</strong>",
+                checkFunction: function() {
+                    const a1 = parseFloat(document.getElementById('A1').textContent) || 0;
+                    const b1 = parseFloat(document.getElementById('B1').textContent) || 0;
+                    const c1 = parseFloat(document.getElementById('C1').textContent) || 0;
+                    const d1 = document.getElementById('D1').textContent.trim();
+                    
+                    return a1 === 10 && b1 === 20 && c1 === 30 && d1 === '60';
+                },
+                successMessage: "✓ Perfekt! Sie können addieren.",
+                failMessage: "✗ Geben Sie 10 in A1, 20 in B1, 30 in C1 ein und =A1+B1+C1 in D1. Dann 'Berechnen' klicken."
+            },
+            {
+                title: "2. SUM-Funktion",
+                instruction: "Erstellen Sie in A1-C1 Zahlen Ihrer Wahl und verwenden Sie in D1 die <strong>=SUM(A1:C1)</strong> Funktion",
+                checkFunction: function() {
+                    const a1 = parseFloat(document.getElementById('A1').textContent) || 0;
+                    const b1 = parseFloat(document.getElementById('B1').textContent) || 0;
+                    const c1 = parseFloat(document.getElementById('C1').textContent) || 0;
+                    const d1 = parseFloat(document.getElementById('D1').textContent) || 0;
+                    
+                    return a1 > 0 && b1 > 0 && c1 > 0 && d1 === (a1 + b1 + c1);
+                },
+                successMessage: "✓ Ausgezeichnet! Sie beherrschen die SUM-Funktion.",
+                failMessage: "✗ Zahlen in A1-C1 eingeben, =SUM(A1:C1) in D1, dann 'Berechnen'."
+            },
+            {
+                title: "3. Subtraktion",
+                instruction: "A1=<strong>100</strong>, B1=<strong>30</strong>, C1 berechnet <strong>=A1-B1</strong>",
+                checkFunction: function() {
+                    const a1 = parseFloat(document.getElementById('A1').textContent) || 0;
+                    const b1 = parseFloat(document.getElementById('B1').textContent) || 0;
+                    const c1 = parseFloat(document.getElementById('C1').textContent) || 0;
+                    
+                    return a1 === 100 && b1 === 30 && c1 === 70;
+                },
+                successMessage: "✓ Prima! Subtraktion funktioniert.",
+                failMessage: "✗ A1=100, B1=30, C1=A1-B1, dann berechnen."
+            },
+            {
+                title: "4. Multiplikation",
+                instruction: "A1=<strong>7</strong>, B1=<strong>8</strong>, C1 berechnet <strong>=A1*B1</strong>",
+                checkFunction: function() {
+                    const a1 = parseFloat(document.getElementById('A1').textContent) || 0;
+                    const b1 = parseFloat(document.getElementById('B1').textContent) || 0;
+                    const c1 = parseFloat(document.getElementById('C1').textContent) || 0;
+                    
+                    return a1 === 7 && b1 === 8 && c1 === 56;
+                },
+                successMessage: "✓ Sehr gut! Multiplikation beherrscht.",
+                failMessage: "✗ A1=7, B1=8, C1=A1*B1, dann berechnen."
+            },
+            {
+                title: "5. Division",
+                instruction: "A1=<strong>100</strong>, B1=<strong>5</strong>, C1 berechnet <strong>=A1/B1</strong>",
+                checkFunction: function() {
+                    const a1 = parseFloat(document.getElementById('A1').textContent) || 0;
+                    const b1 = parseFloat(document.getElementById('B1').textContent) || 0;
+                    const c1 = parseFloat(document.getElementById('C1').textContent) || 0;
+                    
+                    return a1 === 100 && b1 === 5 && c1 === 20;
+                },
+                successMessage: "✓ Hervorragend! Division verstanden.",
+                failMessage: "✗ A1=100, B1=5, C1=A1/B1, dann berechnen."
+            },
+            {
+                title: "6. AVERAGE-Funktion",
+                instruction: "Zahlen in A1-C1, Durchschnitt in D1 mit <strong>=AVERAGE(A1:C1)</strong>",
+                checkFunction: function() {
+                    const a1 = parseFloat(document.getElementById('A1').textContent) || 0;
+                    const b1 = parseFloat(document.getElementById('B1').textContent) || 0;
+                    const c1 = parseFloat(document.getElementById('C1').textContent) || 0;
+                    const d1 = parseFloat(document.getElementById('D1').textContent) || 0;
+                    
+                    const avg = (a1 + b1 + c1) / 3;
+                    return a1 > 0 && b1 > 0 && c1 > 0 && Math.abs(d1 - avg) < 0.01;
+                },
+                successMessage: "✓ Fantastisch! AVERAGE-Funktion gemeistert.",
+                failMessage: "✗ Zahlen in A1-C1, =AVERAGE(A1:C1) in D1, berechnen."
+            },
+            {
+                title: "7. MAX und MIN",
+                instruction: "Zahlen in A1-C1. Größte Zahl in D1 mit <strong>=MAX(A1:C1)</strong>, kleinste in D2 mit <strong>=MIN(A1:C1)</strong>",
+                checkFunction: function() {
+                    const a1 = parseFloat(document.getElementById('A1').textContent) || 0;
+                    const b1 = parseFloat(document.getElementById('B1').textContent) || 0;
+                    const c1 = parseFloat(document.getElementById('C1').textContent) || 0;
+                    const d1 = parseFloat(document.getElementById('D1').textContent) || 0;
+                    const d2 = parseFloat(document.getElementById('D2').textContent) || 0;
+                    
+                    const maxVal = Math.max(a1, b1, c1);
+                    const minVal = Math.min(a1, b1, c1);
+                    
+                    return a1 > 0 && b1 > 0 && c1 > 0 && d1 === maxVal && d2 === minVal;
+                },
+                successMessage: "✓ Ausgezeichnet! MAX/MIN-Funktionen verstanden.",
+                failMessage: "✗ Zahlen in A1-C1, =MAX(A1:C1) in D1, =MIN(A1:C1) in D2."
+            },
+            {
+                title: "8. Prozentrechnung",
+                instruction: "A1=<strong>200</strong>, A2=<strong>15</strong> (Prozent), A3 berechnet 15% von 200 mit <strong>=A1*A2/100</strong>",
+                checkFunction: function() {
+                    const a1 = parseFloat(document.getElementById('A1').textContent) || 0;
+                    const a2 = parseFloat(document.getElementById('A2').textContent) || 0;
+                    const a3 = parseFloat(document.getElementById('A3').textContent) || 0;
+                    
+                    return a1 === 200 && a2 === 15 && a3 === 30;
+                },
+                successMessage: "✓ Prima! Prozentrechnung funktioniert.",
+                failMessage: "✗ A1=200, A2=15, A3=A1*A2/100, dann berechnen."
+            },
+            {
+                title: "9. Mehrere Spalten",
+                instruction: "Erstellen Sie eine kleine Tabelle: A1=<strong>Artikel</strong>, B1=<strong>Preis</strong>, C1=<strong>Menge</strong>, D1=<strong>Gesamt</strong>. Dann A2=Brot, B2=2.5, C2=3, D2=<strong>=B2*C2</strong>",
+                checkFunction: function() {
+                    const a1 = document.getElementById('A1').textContent.trim().toLowerCase();
+                    const b1 = document.getElementById('B1').textContent.trim().toLowerCase();
+                    const c1 = document.getElementById('C1').textContent.trim().toLowerCase();
+                    const d1 = document.getElementById('D1').textContent.trim().toLowerCase();
+                    
+                    const a2 = document.getElementById('A2').textContent.trim().toLowerCase();
+                    const b2 = parseFloat(document.getElementById('B2').textContent) || 0;
+                    const c2 = parseFloat(document.getElementById('C2').textContent) || 0;
+                    const d2 = parseFloat(document.getElementById('D2').textContent) || 0;
+                    
+                    return a1.includes('artikel') && b1.includes('preis') && c1.includes('menge') && 
+                           d1.includes('gesamt') && a2.includes('brot') && b2 === 2.5 && c2 === 3 && d2 === 7.5;
+                },
+                successMessage: "✓ Hervorragend! Tabellenkalkulation verstanden.",
+                failMessage: "✗ Überschriften in Zeile 1, Brot/2.5/3 in A2-C2, =B2*C2 in D2."
+            },
+            {
+                title: "10. COUNT-Funktion",
+                instruction: "Zahlen in A1-E1, in A2 zählen Sie mit <strong>=COUNT(A1:E1)</strong> wie viele Zahlen da sind",
+                checkFunction: function() {
+                    const cells = ['A1', 'B1', 'C1', 'D1', 'E1'];
+                    let numberCount = 0;
+                    
+                    cells.forEach(cellId => {
+                        const value = document.getElementById(cellId).textContent.trim();
+                        if (value !== '' && !isNaN(parseFloat(value))) {
+                            numberCount++;
+                        }
+                    });
+                    
+                    const a2 = parseFloat(document.getElementById('A2').textContent) || 0;
+                    
+                    return numberCount > 0 && a2 === numberCount;
+                },
+                successMessage: "✓ Fantastisch! Alle Excel-Grundlagen gemeistert!",
+                failMessage: "✗ Zahlen in A1-E1 eingeben, =COUNT(A1:E1) in A2, berechnen."
+            }
+        ];
+
+        let currentExcelTaskIndex = 0;
+
+        function loadExcelTask(index) {
+            const task = excelTasks[index];
+            const container = document.getElementById('excel-task-container');
+            
+            container.innerHTML = `
+                <div class="p-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg">
+                    <h2 class="text-xl font-semibold mb-2 text-green-800">${task.title}</h2>
+                    <p class="text-green-700">${task.instruction}</p>
+                </div>
+            `;
+            
+            document.getElementById('excel-feedback').textContent = '';
+            document.getElementById('excel-check-btn').style.display = 'inline-block';
+            document.getElementById('excel-next-btn').style.display = 'none';
+        }
+
+        function calculateExcel() {
+            const cells = document.querySelectorAll('#excelGrid td[contenteditable="true"]');
+            
+            cells.forEach(cell => {
+                let content = cell.textContent.trim();
+                if (content.startsWith('=')) {
+                    try {
+                        let formula = content.substring(1).toUpperCase(); // "=" entfernen und in Großbuchstaben
+                        console.log('Original formula:', formula);
+                        
+                        // SUM-Funktion speziell behandeln
+                        if (formula.includes('SUM(')) {
+                            const sumMatch = formula.match(/SUM\(([A-E][1-5]):([A-E][1-5])\)/);
+                            if (sumMatch) {
+                                const startCell = sumMatch[1];
+                                const endCell = sumMatch[2];
+                                console.log('SUM range:', startCell, 'to', endCell);
+                                
+                                let sum = 0;
+                                const startCol = startCell.charCodeAt(0) - 65;
+                                const endCol = endCell.charCodeAt(0) - 65;
+                                const row = parseInt(startCell.substring(1));
+                                
+                                for (let col = startCol; col <= endCol; col++) {
+                                    const cellId = String.fromCharCode(65 + col) + row;
+                                    const cellValue = parseFloat(document.getElementById(cellId).textContent) || 0;
+                                    console.log('Adding cell', cellId, '=', cellValue);
+                                    sum += cellValue;
+                                }
+                                
+                                console.log('SUM result:', sum);
+                                cell.textContent = sum;
+                                cell.style.backgroundColor = '';
+                                return;
+                            }
+                        }
+                        
+                        // AVERAGE-Funktion speziell behandeln
+                        if (formula.includes('AVERAGE(')) {
+                            const avgMatch = formula.match(/AVERAGE\(([A-E][1-5]):([A-E][1-5])\)/);
+                            if (avgMatch) {
+                                const startCell = avgMatch[1];
+                                const endCell = avgMatch[2];
+                                console.log('AVERAGE range:', startCell, 'to', endCell);
+                                
+                                let sum = 0;
+                                let count = 0;
+                                const startCol = startCell.charCodeAt(0) - 65;
+                                const endCol = endCell.charCodeAt(0) - 65;
+                                const row = parseInt(startCell.substring(1));
+                                
+                                for (let col = startCol; col <= endCol; col++) {
+                                    const cellId = String.fromCharCode(65 + col) + row;
+                                    const cellValue = parseFloat(document.getElementById(cellId).textContent) || 0;
+                                    if (cellValue !== 0) {
+                                        console.log('Adding cell', cellId, '=', cellValue);
+                                        sum += cellValue;
+                                        count++;
+                                    }
+                                }
+                                
+                                const average = count > 0 ? sum / count : 0;
+                                console.log('AVERAGE result:', average, '(sum:', sum, 'count:', count, ')');
+                                cell.textContent = average;
+                                cell.style.backgroundColor = '';
+                                return;
+                            }
+                        }
+                        
+                        // MAX-Funktion speziell behandeln
+                        if (formula.includes('MAX(')) {
+                            const maxMatch = formula.match(/MAX\(([A-E][1-5]):([A-E][1-5])\)/);
+                            if (maxMatch) {
+                                const startCell = maxMatch[1];
+                                const endCell = maxMatch[2];
+                                console.log('MAX range:', startCell, 'to', endCell);
+                                
+                                const values = [];
+                                const startCol = startCell.charCodeAt(0) - 65;
+                                const endCol = endCell.charCodeAt(0) - 65;
+                                const row = parseInt(startCell.substring(1));
+                                
+                                for (let col = startCol; col <= endCol; col++) {
+                                    const cellId = String.fromCharCode(65 + col) + row;
+                                    const cellValue = parseFloat(document.getElementById(cellId).textContent) || 0;
+                                    if (cellValue !== 0) {
+                                        values.push(cellValue);
+                                    }
+                                }
+                                
+                                const maxValue = values.length > 0 ? Math.max(...values) : 0;
+                                console.log('MAX result:', maxValue);
+                                cell.textContent = maxValue;
+                                cell.style.backgroundColor = '';
+                                return;
+                            }
+                        }
+                        
+                        // MIN-Funktion speziell behandeln
+                        if (formula.includes('MIN(')) {
+                            const minMatch = formula.match(/MIN\(([A-E][1-5]):([A-E][1-5])\)/);
+                            if (minMatch) {
+                                const startCell = minMatch[1];
+                                const endCell = minMatch[2];
+                                console.log('MIN range:', startCell, 'to', endCell);
+                                
+                                const values = [];
+                                const startCol = startCell.charCodeAt(0) - 65;
+                                const endCol = endCell.charCodeAt(0) - 65;
+                                const row = parseInt(startCell.substring(1));
+                                
+                                for (let col = startCol; col <= endCol; col++) {
+                                    const cellId = String.fromCharCode(65 + col) + row;
+                                    const cellValue = parseFloat(document.getElementById(cellId).textContent) || 0;
+                                    if (cellValue !== 0) {
+                                        values.push(cellValue);
+                                    }
+                                }
+                                
+                                const minValue = values.length > 0 ? Math.min(...values) : 0;
+                                console.log('MIN result:', minValue);
+                                cell.textContent = minValue;
+                                cell.style.backgroundColor = '';
+                                return;
+                            }
+                        }
+                        
+                        // COUNT-Funktion speziell behandeln
+                        if (formula.includes('COUNT(')) {
+                            const countMatch = formula.match(/COUNT\(([A-E][1-5]):([A-E][1-5])\)/);
+                            if (countMatch) {
+                                const startCell = countMatch[1];
+                                const endCell = countMatch[2];
+                                console.log('COUNT range:', startCell, 'to', endCell);
+                                
+                                let count = 0;
+                                const startCol = startCell.charCodeAt(0) - 65;
+                                const endCol = endCell.charCodeAt(0) - 65;
+                                const row = parseInt(startCell.substring(1));
+                                
+                                for (let col = startCol; col <= endCol; col++) {
+                                    const cellId = String.fromCharCode(65 + col) + row;
+                                    const cellValue = document.getElementById(cellId).textContent.trim();
+                                    if (cellValue !== '' && !isNaN(parseFloat(cellValue))) {
+                                        count++;
+                                        console.log('Counting cell', cellId, '=', cellValue);
+                                    }
+                                }
+                                
+                                console.log('COUNT result:', count);
+                                cell.textContent = count;
+                                cell.style.backgroundColor = '';
+                                return;
+                            }
+                        }
+                        
+                        // Normale Formeln (A1+B1+C1, etc.)
+                        formula = formula.replace(/([A-E][1-5])/g, (match) => {
+                            const refCell = document.getElementById(match);
+                            const value = parseFloat(refCell.textContent) || 0;
+                            console.log('Replacing', match, 'with', value);
+                            return value.toString();
+                        });
+                        
+                        console.log('Final formula for eval:', formula);
+                        const result = eval(formula);
+                        cell.textContent = result;
+                        cell.style.backgroundColor = '';
+                        
+                    } catch (error) {
+                        console.log('Formel-Fehler:', error, 'in cell', cell.id);
+                        cell.style.backgroundColor = '#ffcccc';
+                        cell.textContent = 'FEHLER';
+                    }
+                }
+            });
+        }
+        
+        function calculateRange(startCell, endCell, operation) {
+            const startCol = startCell.charCodeAt(0) - 65;
+            const startRow = parseInt(startCell.substring(1)) - 1;
+            const endCol = endCell.charCodeAt(0) - 65;
+            const endRow = parseInt(endCell.substring(1)) - 1;
+            
+            const values = [];
+            
+            for (let r = startRow; r <= endRow; r++) {
+                for (let c = startCol; c <= endCol; c++) {
+                    const cellId = String.fromCharCode(65 + c) + (r + 1);
+                    const cellValue = parseFloat(document.getElementById(cellId).textContent) || 0;
+                    if (cellValue !== 0) values.push(cellValue);
+                }
+            }
+            
+            switch (operation) {
+                case 'sum': return values.reduce((a, b) => a + b, 0);
+                case 'avg': return values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
+                case 'max': return values.length > 0 ? Math.max(...values) : 0;
+                case 'min': return values.length > 0 ? Math.min(...values) : 0;
+                case 'count': return values.length;
+                default: return 0;
+            }
+        }
+
+        function checkExcelTask() {
+            const task = excelTasks[currentExcelTaskIndex];
+            const feedback = document.getElementById('excel-feedback');
+            
+            if (task.checkFunction()) {
+                feedback.innerHTML = `<span class="text-green-600">${task.successMessage}</span>`;
+                document.getElementById('excel-check-btn').style.display = 'none';
+                document.getElementById('excel-next-btn').style.display = 'inline-block';
+            } else {
+                feedback.innerHTML = `<span class="text-red-600">${task.failMessage}</span>`;
+            }
+        }
+
+        function nextExcelTask() {
+            currentExcelTaskIndex++;
+            
+            if (currentExcelTaskIndex >= excelTasks.length) {
+                showExcelCongratulations();
+                return;
+            }
+            
+            loadExcelTask(currentExcelTaskIndex);
+            clearExcelGrid();
+        }
+        
+        function jumpToExcelTask(taskIndex) {
+            if (taskIndex >= 0 && taskIndex < excelTasks.length) {
+                currentExcelTaskIndex = taskIndex;
+                loadExcelTask(taskIndex);
+                clearExcelGrid();
+            }
+        }
+        
+        function jumpToShortcutTask(taskIndex) {
+            if (taskIndex >= 0 && taskIndex < lessons.length) {
+                currentLessonIndex = taskIndex;
+                isQuizCompleted = false;
+                document.getElementById('exercise-section').style.display = 'none';
+                updateQuizDisplay();
+                document.getElementById('quiz-result').textContent = '';
+            }
+        }
+        
+        function clearExcelGrid() {
+            const cells = document.querySelectorAll('#excelGrid td[contenteditable="true"]');
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.style.backgroundColor = '';
+            });
+        }
+        
+        function showExcelCongratulations() {
+            const container = document.getElementById('excel-task-container');
+            container.innerHTML = `
+                <div class="text-center p-8 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border-2 border-green-500">
+                    <div class="text-6xl mb-4">🎉</div>
+                    <h2 class="text-3xl font-bold text-green-800 mb-4">Herzlichen Glückwunsch!</h2>
+                    <p class="text-xl text-green-700 mb-6">Sie haben alle ${excelTasks.length} Excel-Aufgaben erfolgreich abgeschlossen!</p>
+                    
+                    <div class="bg-white p-4 rounded-lg shadow-md mb-6">
+                        <h3 class="text-lg font-semibold mb-3 text-gray-800">Sie können jetzt:</h3>
+                        <div class="grid grid-cols-1 gap-2 text-sm text-left max-w-md mx-auto">
+                            <div class="p-2 bg-gray-50 rounded">✓ Grundrechenarten (+, -, *, /)</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ SUM-Funktion für Summen</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ AVERAGE für Durchschnitte</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ MAX/MIN für größte/kleinste Werte</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ COUNT zum Zählen von Zahlen</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ Prozentrechnung</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ Einfache Tabellenkalkulation</div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <button onclick="restartExcelTasks()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 text-lg font-semibold">
+                            🔄 Nochmal üben
+                        </button>
+                        <br>
+                        <button onclick="changeTab('word')" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 text-lg font-semibold">
+                            📝 Zu Word-Übungen
+                        </button>
+                        <button onclick="changeTab('shortcuts')" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 text-lg font-semibold ml-3">
+                            ⌨️ Zu Shortcuts
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('excel-check-btn').style.display = 'none';
+            document.getElementById('excel-next-btn').style.display = 'none';
+            document.getElementById('excel-feedback').textContent = '';
+        }
+        
+        function restartExcelTasks() {
+            currentExcelTaskIndex = 0;
+            loadExcelTask(0);
+            clearExcelGrid();
+        }
+
+        // --- Shortcuts Training Logic ---
+        const lessons = [
+            { keys: 'Strg + C', function: 'Kopieren', correct: 0, exercise: { title: "1. Strg + C: Kopieren", instruction: "Kopieren Sie den Wert aus A1 nach A2 mit Strg+C und Strg+V", initialValues: { "a1": "Hallo Welt", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { const a1 = document.getElementById('a1').textContent.replace(/\s+/g, ' ').trim(); const a2 = document.getElementById('a2').textContent.replace(/\s+/g, ' ').trim(); return a2.length > 0 && (a1 === a2 || a2.includes(a1) || a1.includes(a2)); }, successMessage: "✓ Richtig! Sie haben erfolgreich kopiert.", failMessage: "✗ Markieren Sie A1, Strg+C, klicken A2, Strg+V." }},
+            { keys: 'Strg + X', function: 'Ausschneiden', correct: 2, exercise: { title: "2. Strg + X: Ausschneiden", instruction: "Schneiden Sie den Wert aus A1 aus und fügen ihn in A2 ein", initialValues: { "a1": "Schneide mich aus", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { const a1 = document.getElementById('a1').textContent.trim(); const a2 = document.getElementById('a2').textContent.trim(); return a1.length === 0 && a2.includes("Schneide mich aus"); }, successMessage: "✓ Richtig! Ausschneiden funktioniert.", failMessage: "✗ Markieren A1, Strg+X, klicken A2, Strg+V." }},
+            { keys: 'Strg + A', function: 'Alles markieren', correct: 1, exercise: { title: "3. Strg + A: Alles markieren", instruction: "Markieren Sie alles in A1 mit Strg+A, kopieren und in A2 einfügen", initialValues: { "a1": "Dieser ganze Text wird markiert", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { const a1 = document.getElementById('a1').textContent.trim(); const a2 = document.getElementById('a2').textContent.trim(); return a2.length > 0 && (a1 === a2 || a2.includes(a1)); }, successMessage: "✓ Richtig! Alles markiert und kopiert.", failMessage: "✗ Klick A1, Strg+A, Strg+C, klick A2, Strg+V." }},
+            { keys: 'Strg + Z', function: 'Rückgängig', correct: 0, exercise: { title: "4. Strg + Z: Rückgängig", instruction: "Ändern Sie A1, dann machen Sie es mit Strg+Z rückgängig", initialValues: { "a1": "Original Text", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { return document.getElementById('a1').textContent.trim() === "Original Text"; }, successMessage: "✓ Richtig! Rückgängig gemacht.", failMessage: "✗ Text in A1 ändern, dann Strg+Z drücken." }},
+            { keys: 'Strg + S', function: 'Speichern', correct: 3, exercise: { title: "5. Strg + S: Speichern", instruction: "Drücken Sie Strg+S um das Dokument zu speichern", initialValues: { "a1": "Dokument Text", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { return true; }, successMessage: "✓ Richtig! Speichern-Dialog geöffnet.", failMessage: "✗ Drücken Sie Strg+S zum Speichern." }},
+            { keys: 'Strg + F', function: 'Suchen', correct: 2, exercise: { title: "6. Strg + F: Suchen", instruction: "Drücken Sie Strg+F um die Suchfunktion zu aktivieren", initialValues: { "a1": "Text zum finden", "a2": "Mehr Text", "b1": "", "b2": "" }, checkFunction: function() { return true; }, successMessage: "✓ Richtig! Suchfunktion aktiviert.", failMessage: "✗ Drücken Sie Strg+F für die Suche." }},
+            { keys: 'Strg + P', function: 'Drucken', correct: 1, exercise: { title: "7. Strg + P: Drucken", instruction: "Drücken Sie Strg+P um das Druckmenü zu öffnen", initialValues: { "a1": "Drucktext", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { return true; }, successMessage: "✓ Richtig! Druckmenü geöffnet.", failMessage: "✗ Drücken Sie Strg+P zum Drucken." }},
+            { keys: 'Strg + N', function: 'Neu', correct: 1, exercise: { title: "8. Strg + N: Neues Dokument", instruction: "Drücken Sie Strg+N um ein neues Dokument zu erstellen", initialValues: { "a1": "Altes Dokument", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { return true; }, successMessage: "✓ Richtig! Neues Dokument erstellt.", failMessage: "✗ Drücken Sie Strg+N für neues Dokument." }},
+            { keys: 'Strg + O', function: 'Öffnen', correct: 2, exercise: { title: "9. Strg + O: Öffnen", instruction: "Drücken Sie Strg+O um ein Dokument zu öffnen", initialValues: { "a1": "Datei öffnen", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { return true; }, successMessage: "✓ Richtig! Öffnen-Dialog angezeigt.", failMessage: "✗ Drücken Sie Strg+O zum Öffnen." }},
+            { keys: 'Strg + Y', function: 'Wiederholen', correct: 1, exercise: { title: "10. Strg + Y: Wiederholen", instruction: "Drücken Sie Strg+Y um die letzte Aktion zu wiederholen", initialValues: { "a1": "Aktion wiederholen", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { return true; }, successMessage: "✓ Richtig! Aktion wiederholt.", failMessage: "✗ Drücken Sie Strg+Y zum Wiederholen." }},
+            { keys: 'Strg + W', function: 'Schließen', correct: 3, exercise: { title: "11. Strg + W: Schließen", instruction: "Drücken Sie Strg+W um das aktuelle Fenster zu schließen", initialValues: { "a1": "Fenster schließen", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { return true; }, successMessage: "✓ Richtig! Fenster geschlossen.", failMessage: "✗ Drücken Sie Strg+W zum Schließen." }},
+            { keys: 'Alt + Tab', function: 'Programme wechseln', correct: 0, exercise: { title: "12. Alt + Tab: Programme wechseln", instruction: "Drücken Sie Alt+Tab um zwischen Programmen zu wechseln", initialValues: { "a1": "Programm 1", "a2": "Programm 2", "b1": "", "b2": "" }, checkFunction: function() { return true; }, successMessage: "✓ Richtig! Zwischen Programmen gewechselt.", failMessage: "✗ Drücken Sie Alt+Tab zum Wechseln." }},
+            { keys: 'Alt + F4', function: 'Programm beenden', correct: 2, exercise: { title: "13. Alt + F4: Programm beenden", instruction: "Drücken Sie Alt+F4 um das aktuelle Programm zu beenden", initialValues: { "a1": "Programm beenden", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { return true; }, successMessage: "✓ Richtig! Programm beendet.", failMessage: "✗ Drücken Sie Alt+F4 zum Beenden." }},
+            { keys: 'Windows + D', function: 'Desktop anzeigen', correct: 1, exercise: { title: "14. Windows + D: Desktop", instruction: "Drücken Sie Windows+D um den Desktop anzuzeigen", initialValues: { "a1": "Desktop", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { return true; }, successMessage: "✓ Richtig! Desktop angezeigt.", failMessage: "✗ Drücken Sie Windows+D für Desktop." }},
+            { keys: 'Windows + L', function: 'Computer sperren', correct: 3, exercise: { title: "15. Windows + L: Sperren", instruction: "Drücken Sie Windows+L um den Computer zu sperren", initialValues: { "a1": "Computer sperren", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { return true; }, successMessage: "✓ Computer gesperrt. (Vorsicht!)", failMessage: "✗ Windows+L sperrt den Computer." }},
+            { keys: 'Windows + E', function: 'Explorer öffnen', correct: 0, exercise: { title: "16. Windows + E: Explorer", instruction: "Drücken Sie Windows+E um den Datei-Explorer zu öffnen", initialValues: { "a1": "Explorer öffnen", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { return true; }, successMessage: "✓ Richtig! Explorer geöffnet.", failMessage: "✗ Drücken Sie Windows+E für Explorer." }},
+            { keys: 'Windows + R', function: 'Ausführen', correct: 2, exercise: { title: "17. Windows + R: Ausführen", instruction: "Drücken Sie Windows+R um das Ausführen-Fenster zu öffnen", initialValues: { "a1": "Programm ausführen", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { return true; }, successMessage: "✓ Richtig! Ausführen-Dialog geöffnet.", failMessage: "✗ Drücken Sie Windows+R zum Ausführen." }},
+            { keys: 'Windows + S', function: 'Suche', correct: 1, exercise: { title: "18. Windows + S: Suche", instruction: "Drücken Sie Windows+S um die Windows-Suche zu öffnen", initialValues: { "a1": "Suche öffnen", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { return true; }, successMessage: "✓ Richtig! Suche geöffnet.", failMessage: "✗ Drücken Sie Windows+S für Suche." }},
+            { keys: 'F5', function: 'Aktualisieren', correct: 3, exercise: { title: "19. F5: Aktualisieren", instruction: "Drücken Sie F5 um die Seite/den Ordner zu aktualisieren", initialValues: { "a1": "Seite aktualisieren", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { return true; }, successMessage: "✓ Richtig! Seite aktualisiert.", failMessage: "✗ Drücken Sie F5 zum Aktualisieren." }},
+            { keys: 'F1', function: 'Hilfe', correct: 0, exercise: { title: "20. F1: Hilfe", instruction: "Drücken Sie F1 um die Hilfe zu öffnen", initialValues: { "a1": "Hilfe öffnen", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { return true; }, successMessage: "✓ Richtig! Hilfe geöffnet.", failMessage: "✗ Drücken Sie F1 für Hilfe." }},
+            { keys: 'Strg + R', function: 'Neu laden', correct: 2, exercise: { title: "21. Strg + R: Neu laden", instruction: "Drücken Sie Strg+R um die Seite neu zu laden", initialValues: { "a1": "Seite neu laden", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { return true; }, successMessage: "✓ Richtig! Seite neu geladen.", failMessage: "✗ Drücken Sie Strg+R zum Neu laden." }},
+            { keys: 'Strg + Shift + N', function: 'Neuer Ordner', correct: 1, exercise: { title: "22. Strg + Shift + N: Neuer Ordner", instruction: "Drücken Sie Strg+Shift+N um einen neuen Ordner zu erstellen", initialValues: { "a1": "Neuer Ordner", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { return true; }, successMessage: "✓ Richtig! Neuer Ordner erstellt.", failMessage: "✗ Drücken Sie Strg+Shift+N für Ordner." }},
+            { keys: 'Windows + I', function: 'Einstellungen', correct: 3, exercise: { title: "23. Windows + I: Einstellungen", instruction: "Drücken Sie Windows+I um die Windows-Einstellungen zu öffnen", initialValues: { "a1": "Einstellungen", "a2": "", "b1": "", "b2": "" }, checkFunction: function() { return true; }, successMessage: "✓ Richtig! Einstellungen geöffnet.", failMessage: "✗ Drücken Sie Windows+I für Einstellungen." }}
+        ];
+
+        let currentLessonIndex = 0;
+        let isQuizCompleted = false;
+
+        const quizOptions = [
+            ['Kopieren', 'Einfügen', 'Ausschneiden', 'Speichern'], ['Drucken', 'Einfügen', 'Ausschneiden', 'Suchen'], ['Speichern', 'Alles markieren', 'Neu', 'Einfügen'], ['Rückgängig', 'Desktop anzeigen', 'Programme wechseln', 'Computer sperren'], ['Kopieren', 'Einfügen', 'Drucken', 'Speichern'], ['Kopieren', 'Einfügen', 'Suchen', 'Drucken'], ['Kopieren', 'Drucken', 'Einfügen', 'Speichern'], ['Kopieren', 'Neu', 'Einfügen', 'Speichern'], ['Kopieren', 'Einfügen', 'Öffnen', 'Speichern'], ['Kopieren', 'Wiederholen', 'Einfügen', 'Speichern'], ['Kopieren', 'Einfügen', 'Speichern', 'Schließen'], ['Kopieren', 'Programme wechseln', 'Einfügen', 'Speichern'], ['Kopieren', 'Einfügen', 'Programm beenden', 'Speichern'], ['Kopieren', 'Desktop anzeigen', 'Einfügen', 'Speichern'], ['Kopieren', 'Einfügen', 'Speichern', 'Computer sperren'], ['Explorer öffnen', 'Einfügen', 'Kopieren', 'Speichern'], ['Kopieren', 'Einfügen', 'Ausführen', 'Speichern'], ['Kopieren', 'Suche', 'Einfügen', 'Speichern'], ['Kopieren', 'Einfügen', 'Speichern', 'Aktualisieren'], ['Hilfe', 'Einfügen', 'Kopieren', 'Speichern'], ['Kopieren', 'Einfügen', 'Neu laden', 'Speichern'], ['Kopieren', 'Neuer Ordner', 'Einfügen', 'Speichern'], ['Kopieren', 'Einfügen', 'Speichern', 'Einstellungen']
+        ];
+
+        function updateQuizDisplay() {
+            const lesson = lessons[currentLessonIndex];
+            const quizTitle = document.getElementById('quiz-step-title');
+            
+            // Quiz-Titel mit Schritt-Nummer aktualisieren
+            if (quizTitle) {
+                quizTitle.textContent = `Schritt ${currentLessonIndex + 1}: Quiz - Was macht dieser Shortcut?`;
+            }
+            
+            document.getElementById('current-shortcut').textContent = lesson.keys;
+            
+            const options = quizOptions[currentLessonIndex];
+            const optionButtons = document.querySelectorAll('.quiz-option');
+            optionButtons.forEach((button, index) => {
+                button.textContent = options[index];
+                button.className = 'quiz-option p-3 bg-blue-100 hover:bg-blue-200 rounded border cursor-pointer';
+            });
+        }
+
+        function checkAnswer(selectedIndex) {
+            if (isQuizCompleted) return;
+            
+            const lesson = lessons[currentLessonIndex];
+            const resultDiv = document.getElementById('quiz-result');
+            const optionButtons = document.querySelectorAll('.quiz-option');
+            
+            if (selectedIndex === lesson.correct) {
+                resultDiv.innerHTML = '<span class="text-green-600">✓ Richtig! Jetzt zur praktischen Übung...</span>';
+                optionButtons[selectedIndex].className += ' bg-green-200 border-green-500';
+                isQuizCompleted = true;
+                
+                // Show exercise section after 1.5 seconds
+                setTimeout(() => {
+                    document.getElementById('exercise-section').style.display = 'block';
+                    loadExercise(currentLessonIndex);
+                }, 1500);
+                
+            } else {
+                resultDiv.innerHTML = `<span class="text-red-600">✗ Falsch. Richtig ist: ${lesson.function}. Versuchen Sie es nochmal!</span>`;
+                optionButtons[selectedIndex].className += ' bg-red-200 border-red-500';
+                optionButtons[lesson.correct].className += ' bg-green-200 border-green-500';
+                
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    updateQuizDisplay();
+                    resultDiv.textContent = '';
+                }, 2000);
+            }
+        }
+
+        function loadExercise(index) {
+            const lesson = lessons[index];
+            const exercise = lesson.exercise;
+            const exerciseDiv = document.getElementById('current-exercise');
+            
+            // Auch die Übungsbereich-Überschrift aktualisieren
+            const exerciseTitle = document.getElementById('exercise-step-title');
+            if (exerciseTitle) {
+                exerciseTitle.textContent = `Schritt ${index + 1}: Praktische Übung`;
+            }
+            
+            exerciseDiv.innerHTML = `
+                <h4 class="font-semibold mb-2">${exercise.title}</h4>
+                <p class="text-sm text-gray-600 mb-4">${exercise.instruction}</p>
+                
+                <table class="border border-gray-300 mb-4">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border border-gray-300 px-3 py-2"></th>
+                            <th class="border border-gray-300 px-3 py-2">A</th>
+                            <th class="border border-gray-300 px-3 py-2">B</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th class="border border-gray-300 px-3 py-2 bg-gray-100">1</th>
+                            <td class="border border-gray-300 px-3 py-2" contenteditable="true" id="a1">${exercise.initialValues["a1"]}</td>
+                            <td class="border border-gray-300 px-3 py-2" contenteditable="true" id="b1">${exercise.initialValues["b1"]}</td>
+                        </tr>
+                        <tr>
+                            <th class="border border-gray-300 px-3 py-2 bg-gray-100">2</th>
+                            <td class="border border-gray-300 px-3 py-2" contenteditable="true" id="a2">${exercise.initialValues["a2"]}</td>
+                            <td class="border border-gray-300 px-3 py-2" contenteditable="true" id="b2">${exercise.initialValues["b2"]}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div id="exercise-feedback" class="mb-4 text-sm font-semibold"></div>
+                <button onclick="checkExercise()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                    Prüfen
+                </button>
+                <button onclick="nextLesson()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 ml-2">
+                    Nächste Lektion
+                </button>
+                <button onclick="resetExercise()" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 ml-2">
+                    Reset
+                </button>
+            `;
+            
+            // Initialize undo functionality for this exercise
+            excelUndoStack = [];
+            saveExcelState(); // Save initial state
+            
+            // Add event listeners to cells for tracking changes
+            const cells = ['a1', 'a2', 'b1', 'b2'];
+            cells.forEach(cellId => {
+                const cell = document.getElementById(cellId);
+                if (cell) {
+                    cell.addEventListener('input', function() {
+                        // Save state before changes are made
+                        setTimeout(() => {
+                            saveExcelState();
+                        }, 100);
+                    });
+                }
+            });
+        }
+
+        function checkExercise() {
+            const lesson = lessons[currentLessonIndex];
+            const exercise = lesson.exercise;
+            const feedback = document.getElementById('exercise-feedback');
+            
+            if (exercise.checkFunction()) {
+                feedback.innerHTML = `<span class="text-green-600">${exercise.successMessage}</span>`;
+            } else {
+                feedback.innerHTML = `<span class="text-red-600">${exercise.failMessage}</span>`;
+            }
+        }
+
+        function nextLesson() {
+            currentLessonIndex = (currentLessonIndex + 1) % lessons.length;
+            
+            // Prüfen ob alle Lektionen durchlaufen wurden
+            if (currentLessonIndex === 0) {
+                showCongratulations();
+                return;
+            }
+            
+            isQuizCompleted = false;
+            document.getElementById('exercise-section').style.display = 'none';
+            updateQuizDisplay();
+            document.getElementById('quiz-result').textContent = '';
+        }
+
+        function showCongratulations() {
+            const container = document.getElementById('lesson-container');
+            container.innerHTML = `
+                <div class="text-center p-8 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border-2 border-green-500">
+                    <div class="text-6xl mb-4">🎉</div>
+                    <h2 class="text-3xl font-bold text-green-800 mb-4">Herzlichen Glückwunsch!</h2>
+                    <p class="text-xl text-green-700 mb-6">Sie haben alle ${lessons.length} Shortcut-Lektionen erfolgreich abgeschlossen!</p>
+                    
+                    <div class="bg-white p-4 rounded-lg shadow-md mb-6">
+                        <h3 class="text-lg font-semibold mb-3 text-gray-800">Sie beherrschen jetzt diese Shortcuts:</h3>
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            ${lessons.map(lesson => `
+                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                    <span class="font-mono font-semibold">${lesson.keys}</span>
+                                    <span class="text-gray-600">${lesson.function}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <button onclick="restartShortcuts()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 text-lg font-semibold">
+                            🔄 Nochmal üben
+                        </button>
+                        <br>
+                        <button onclick="changeTab('word')" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 text-lg font-semibold">
+                            📝 Zu Word-Übungen
+                        </button>
+                        <button onclick="changeTab('excel')" class="bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 text-lg font-semibold ml-3">
+                            📊 Zu Excel-Übungen
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function restartShortcuts() {
+            currentLessonIndex = 0;
+            isQuizCompleted = false;
+            
+            // Original-Layout wiederherstellen
+            const container = document.getElementById('lesson-container');
+            container.innerHTML = `
+                <!-- Quiz Section -->
+                <div id="shortcut-quiz" class="mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                    <h3 id="quiz-step-title" class="text-lg font-semibold mb-4 text-blue-800">Schritt 1: Quiz - Was macht dieser Shortcut?</h3>
+                    <div id="current-shortcut" class="text-2xl font-mono bg-white p-4 rounded border text-center mb-4">
+                        Strg + C
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <button onclick="checkAnswer(0)" class="quiz-option p-3 bg-blue-100 hover:bg-blue-200 rounded border cursor-pointer">
+                            Kopieren
+                        </button>
+                        <button onclick="checkAnswer(1)" class="quiz-option p-3 bg-blue-100 hover:bg-blue-200 rounded border cursor-pointer">
+                            Einfügen
+                        </button>
+                        <button onclick="checkAnswer(2)" class="quiz-option p-3 bg-blue-100 hover:bg-blue-200 rounded border cursor-pointer">
+                            Ausschneiden
+                        </button>
+                        <button onclick="checkAnswer(3)" class="quiz-option p-3 bg-blue-100 hover:bg-blue-200 rounded border cursor-pointer">
+                            Speichern
+                        </button>
+                    </div>
+                    <div id="quiz-result" class="text-center font-semibold mb-4"></div>
+                </div>
+
+                <!-- Practical Exercise Section -->
+                <div id="exercise-section" class="p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-r-lg" style="display: none;">
+                    <h3 id="exercise-step-title" class="text-lg font-semibold mb-4 text-yellow-800">Schritt 1: Praktische Übung</h3>
+                    <div id="exercise-area">
+                        <div id="current-exercise" class="mb-4 p-4 bg-white rounded border">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            updateQuizDisplay();
+        }
+
+        function resetExercise() {
+            loadExercise(currentLessonIndex);
+        }
+
+        function toggleHeaders() {
+            const editor = document.getElementById('editor');
+            const hasHeader = document.querySelector('#editor .header, #editor .kopfzeile');
+            
+            if (!hasHeader) {
+                // Header hinzufügen
+                const header = document.createElement('div');
+                header.className = 'header kopfzeile';
+                header.style.borderBottom = '1px solid #000';
+                header.style.paddingBottom = '10px';
+                header.style.marginBottom = '20px';
+                header.style.textAlign = 'center';
+                header.style.fontWeight = 'bold';
+                header.innerHTML = 'KOPFZEILE - Dokumenttitel';
+                
+                // Footer hinzufügen
+                const footer = document.createElement('div');
+                footer.className = 'footer fusszeile';
+                footer.style.borderTop = '1px solid #000';
+                footer.style.paddingTop = '10px';
+                footer.style.marginTop = '20px';
+                footer.style.textAlign = 'center';
+                footer.style.fontSize = '0.9em';
+                footer.innerHTML = 'FUßZEILE - Seite 1';
+                
+                editor.insertBefore(header, editor.firstChild);
+                editor.appendChild(footer);
+            } else {
+                // Header und Footer entfernen
+                const headers = document.querySelectorAll('#editor .header, #editor .kopfzeile');
+                const footers = document.querySelectorAll('#editor .footer, #editor .fusszeile');
+                headers.forEach(h => h.remove());
+                footers.forEach(f => f.remove());
+            }
+            document.getElementById('editor').focus();
+        }
+        
+        function showEffectsSelector() {
+            const selector = document.getElementById('effects-selector');
+            selector.classList.toggle('hidden');
+        }
+        
+        function applySpecificEffect(effectType) {
+            const selection = window.getSelection();
+            const selector = document.getElementById('effects-selector');
+            
+            if (selection.rangeCount > 0 && selection.toString().length > 0) {
+                const range = selection.getRangeAt(0);
+                const selectedText = range.toString();
+                
+                const effects = {
+                    'shadow': 'text-shadow: 2px 2px 4px rgba(0,0,0,0.5);',
+                    'glow': 'text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;',
+                    'outline': '-webkit-text-stroke: 2px #000; color: transparent; font-weight: bold;',
+                    '3d': 'text-shadow: 1px 1px 0px #ccc, 2px 2px 0px #c9c9c9, 3px 3px 0px #bbb, 4px 4px 0px #b9b9b9, 5px 5px 0px #aaa;',
+                    'transparent': 'opacity: 0.5;',
+                    'rainbow': 'background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: bold;'
+                };
+                
+                const span = document.createElement('span');
+                span.style.cssText = effects[effectType] || effects.shadow;
+                span.textContent = selectedText;
+                
+                range.deleteContents();
+                range.insertNode(span);
+                
+                // Selection clearen
+                selection.removeAllRanges();
+                selector.classList.add('hidden');
+                
+                console.log(`Texteffekt angewendet: ${effectType}`);
+            } else {
+                alert('Bitte markieren Sie zuerst Text, auf den Sie Effekte anwenden möchten!');
+            }
+            
+            document.getElementById('editor').focus();
+        }
+        
+        // Alte Funktion für Rückwärtskompatibilität
+        function applyTextEffects() {
+            applySpecificEffect('shadow');
+        }
+
+        // --- Explorer Logic ---
+        const explorerTasks = [
+            {
+                title: "Aufgabe 1: Ordner auf Desktop erstellen",
+                instruction: "Machen Sie einen Rechtsklick auf eine leere Stelle des Desktops und erstellen Sie einen neuen Ordner.",
+                checkFunction: function() {
+                    return document.querySelector('.new-folder-created') !== null;
+                },
+                successMessage: "✓ Perfekt! Sie haben erfolgreich einen neuen Ordner erstellt.",
+                failMessage: "✗ Bitte machen Sie einen Rechtsklick auf den Desktop und wählen Sie 'Neu' > 'Ordner'."
+            },
+            {
+                title: "Aufgabe 2: Ordner umbenennen",
+                instruction: "Machen Sie einen Rechtsklick auf den erstellten Ordner und benennen Sie ihn um.",
+                checkFunction: function() {
+                    return document.querySelector('.folder-renamed') !== null;
+                },
+                successMessage: "✓ Gut gemacht! Sie haben den Ordner umbenannt.",
+                failMessage: "✗ Rechtsklick auf den Ordner und 'Umbenennen' wählen."
+            },
+            {
+                title: "Aufgabe 3: Ordner verschieben",
+                instruction: "Ziehen Sie den Ordner per Drag & Drop an eine andere Stelle auf dem Desktop.",
+                checkFunction: function() {
+                    return document.querySelector('.folder-moved') !== null;
+                },
+                successMessage: "✓ Hervorragend! Sie haben den Ordner verschoben.",
+                failMessage: "✗ Klicken und halten Sie den Ordner, dann ziehen Sie ihn an eine andere Stelle."
+            },
+            {
+                title: "Aufgabe 4: Ordner kopieren",
+                instruction: "Machen Sie einen Rechtsklick auf den Ordner und kopieren Sie ihn.",
+                checkFunction: function() {
+                    return document.querySelector('.folder-copied') !== null;
+                },
+                successMessage: "✓ Super! Sie haben den Ordner kopiert.",
+                failMessage: "✗ Rechtsklick auf den Ordner, dann 'Kopieren' und 'Einfügen' wählen."
+            },
+            {
+                title: "Aufgabe 5: Rückgängig machen",
+                instruction: "Drücken Sie Strg + Z um das Kopieren rückgängig zu machen.",
+                checkFunction: function() {
+                    return document.querySelector('.action-undone') !== null;
+                },
+                successMessage: "✓ Perfekt! Sie haben die Aktion rückgängig gemacht.",
+                failMessage: "✗ Erst kopieren (Rechtsklick → Kopieren → Einfügen), dann Strg + Z drücken."
+            },
+            {
+                title: "Aufgabe 6: Eigenschaften anzeigen",
+                instruction: "Zeigen Sie die Eigenschaften des Ordners an.",
+                checkFunction: function() {
+                    return document.querySelector('.properties-shown') !== null;
+                },
+                successMessage: "✓ Ausgezeichnet! Sie haben die Eigenschaften angezeigt.",
+                failMessage: "✗ Rechtsklick auf den Ordner und 'Eigenschaften' wählen."
+            }
+        ];
+
+        let currentExplorerTaskIndex = 0;
+
+        function loadExplorerTask(index) {
+            if (index >= explorerTasks.length) {
+                showExplorerCongratulations();
+                return;
+            }
+
+            const task = explorerTasks[index];
+            const container = document.getElementById('explorer-task-container');
+            
+            // Different desktop setup based on task
+            let desktopContent = `
+                <!-- Default desktop icons -->
+                <div class="desktop-icon" data-icon="recyclebin">
+                    <div style="font-size: 48px; margin-bottom: 5px;">🗑️</div>
+                    <div class="desktop-icon-text">Papierkorb</div>
+                </div>
+                <div class="desktop-icon" data-icon="thispc">
+                    <div style="font-size: 48px; margin-bottom: 5px;">💻</div>
+                    <div class="desktop-icon-text">Dieser PC</div>
+                </div>`;
+            
+            // Add existing folder for tasks 2 and above
+            if (index >= 1) {
+                let folderName = "Neuer Ordner";
+                let folderClasses = "desktop-icon new-folder-created";
+                
+                // Show renamed folder from task 2 onwards
+                if (index >= 2) {
+                    folderName = "Mein Ordner";
+                    folderClasses += " folder-renamed";
+                }
+                
+                desktopContent += `
+                <div class="${folderClasses}" id="existing-folder" style="position: absolute; left: 20px; top: 140px;">
+                    <div style="font-size: 48px; margin-bottom: 5px;">📁</div>
+                    <div class="desktop-icon-text">${folderName}</div>
+                </div>`;
+            }
+
+            // Add copied folder only for task 6 (after copy+undo is completed)
+            if (index >= 5) {
+                desktopContent += `
+                <div class="desktop-icon folder-copied" id="copied-folder" style="position: absolute; left: 120px; top: 140px;">
+                    <div style="font-size: 48px; margin-bottom: 5px;">📁</div>
+                    <div class="desktop-icon-text">Mein Ordner - Kopie</div>
+                </div>`;
+            }
+            
+            container.innerHTML = `
+                <div class="bg-indigo-50 p-4 rounded-lg border-2 border-indigo-200 mb-4">
+                    <h3 class="text-lg font-semibold text-indigo-800 mb-2">${task.title}</h3>
+                    <p class="text-indigo-700 mb-4">${task.instruction}</p>
+                    
+                    <div class="win10-desktop" id="desktop-simulator">
+                        <div class="win10-desktop-icons" id="desktop-icons">
+                            ${desktopContent}
+                        </div>
+                        
+                        <div class="win10-taskbar">
+                            <div class="win10-start-button">⊞</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Context Menu -->
+                    <div class="context-menu" id="desktop-context-menu">
+                        <div class="context-menu-item" onclick="showSubMenu('view')">
+                            Ansicht ▶
+                        </div>
+                        <div class="context-menu-item" onclick="showSubMenu('sort')">
+                            Sortieren nach ▶
+                        </div>
+                        <div class="context-menu-item" onclick="refreshDesktop()">
+                            Aktualisieren
+                        </div>
+                        <div class="context-menu-separator"></div>
+                        <div class="context-menu-item" onclick="pasteFolder()" id="paste-menu-item">
+                            Einfügen
+                        </div>
+                        <div class="context-menu-separator"></div>
+                        <div class="context-menu-item" onclick="showSubMenu('new')">
+                            Neu ▶
+                        </div>
+                        <div class="context-menu-separator"></div>
+                        <div class="context-menu-item" onclick="showDisplaySettings()">
+                            Anzeige Einstellungen
+                        </div>
+                        <div class="context-menu-item" onclick="showPersonalize()">
+                            Anpassen
+                        </div>
+                    </div>
+                    
+                    <!-- New Submenu -->
+                    <div class="context-menu" id="new-submenu" style="display: none;">
+                        <div class="context-menu-item" onclick="createNewFolder()">
+                            📁 Ordner
+                        </div>
+                        <div class="context-menu-separator"></div>
+                        <div class="context-menu-item" onclick="createNewFile('txt')">
+                            📄 Textdokument
+                        </div>
+                        <div class="context-menu-item" onclick="createNewFile('docx')">
+                            📄 Microsoft Word-Dokument
+                        </div>
+                    </div>
+                    
+                    <!-- Folder Context Menu -->
+                    <div class="context-menu" id="folder-context-menu" style="display: none;">
+                        <div class="context-menu-item" onclick="openFolder()">
+                            Öffnen
+                        </div>
+                        <div class="context-menu-separator"></div>
+                        <div class="context-menu-item" onclick="copyFolder()">
+                            Kopieren
+                        </div>
+                        <div class="context-menu-item" onclick="pasteFolder()">
+                            Einfügen
+                        </div>
+                        <div class="context-menu-separator"></div>
+                        <div class="context-menu-item" onclick="renameFolder()">
+                            Umbenennen
+                        </div>
+                        <div class="context-menu-item" onclick="deleteFolder()">
+                            Löschen
+                        </div>
+                        <div class="context-menu-separator"></div>
+                        <div class="context-menu-item" onclick="showFolderProperties()">
+                            Eigenschaften
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Reset buttons
+            document.getElementById('explorer-check-btn').style.display = 'inline-block';
+            document.getElementById('explorer-next-btn').style.display = 'none';
+            document.getElementById('explorer-feedback').textContent = '';
+
+            // Setup event listeners
+            setupDesktopEventListeners();
+        }
+
+        function setupDesktopEventListeners() {
+            const desktop = document.getElementById('desktop-simulator');
+            const contextMenu = document.getElementById('desktop-context-menu');
+            const newSubmenu = document.getElementById('new-submenu');
+            const folderContextMenu = document.getElementById('folder-context-menu');
+
+            // Setup right-click for existing folders
+            const existingFolder = document.getElementById('existing-folder');
+            if (existingFolder) {
+                existingFolder.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showContextMenu(folderContextMenu, e);
+                });
+                
+                // Add drag & drop functionality
+                setupDragAndDrop(existingFolder);
+            }
+
+            // Setup right-click for copied folder
+            const copiedFolder = document.getElementById('copied-folder');
+            if (copiedFolder) {
+                copiedFolder.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showContextMenu(folderContextMenu, e);
+                });
+                
+                setupDragAndDrop(copiedFolder);
+            }
+
+            // Add keyboard listener for Ctrl+Z
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'z') {
+                    e.preventDefault();
+                    // Check if we're in shortcuts lesson mode
+                    const activeTab = document.querySelector('.tab.active');
+                    if (activeTab && activeTab.textContent.includes('Shortcuts')) {
+                        undoExcelAction();
+                    } else {
+                        undoLastAction();
+                    }
+                }
+            });
+
+            // Desktop right-click
+            desktop.addEventListener('contextmenu', function(e) {
+                // Only show context menu if clicking on empty desktop area
+                if (e.target === desktop || 
+                    e.target.classList.contains('win10-desktop-icons') ||
+                    e.target.classList.contains('win10-desktop')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showContextMenu(contextMenu, e);
+                }
+            });
+
+            // Click to hide menus
+            document.addEventListener('click', function(e) {
+                // Don't hide menus if clicking on menu items
+                if (!e.target.closest('.context-menu')) {
+                    hideAllContextMenus();
+                }
+            });
+
+            // Left click on desktop (prevent propagation only for right clicks)
+            desktop.addEventListener('click', function(e) {
+                if (e.button === 0) { // Left click
+                    hideAllContextMenus();
+                }
+            });
+        }
+
+        function showContextMenu(menu, event) {
+            hideAllContextMenus();
+            
+            // Enable/disable paste option based on clipboard
+            const pasteItem = document.getElementById('paste-menu-item');
+            if (pasteItem) {
+                if (clipboard && clipboard.type === 'folder') {
+                    pasteItem.style.color = 'black';
+                    pasteItem.style.opacity = '1';
+                } else {
+                    pasteItem.style.color = '#ccc';
+                    pasteItem.style.opacity = '0.5';
+                }
+            }
+            
+            menu.style.display = 'block';
+            menu.style.left = event.pageX + 'px';
+            menu.style.top = event.pageY + 'px';
+        }
+
+        function hideAllContextMenus() {
+            document.querySelectorAll('.context-menu').forEach(menu => {
+                menu.style.display = 'none';
+            });
+        }
+
+        function showSubMenu(type) {
+            if (type === 'new') {
+                const newSubmenu = document.getElementById('new-submenu');
+                const contextMenu = document.getElementById('desktop-context-menu');
+                newSubmenu.style.display = 'block';
+                newSubmenu.style.left = (parseInt(contextMenu.style.left) + contextMenu.offsetWidth) + 'px';
+                newSubmenu.style.top = contextMenu.style.top;
+            }
+        }
+
+        function createNewFolder() {
+            const iconsContainer = document.getElementById('desktop-icons');
+            
+            // Check if folder already exists
+            if (document.querySelector('.new-folder-created')) {
+                hideAllContextMenus();
+                return;
+            }
+            
+            const newFolder = document.createElement('div');
+            newFolder.className = 'desktop-icon new-folder-created folder-created';
+            newFolder.innerHTML = `
+                <div style="font-size: 48px; margin-bottom: 5px;">📁</div>
+                <div class="desktop-icon-text">Neuer Ordner</div>
+            `;
+            
+            // Add right-click functionality
+            newFolder.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                showContextMenu(document.getElementById('folder-context-menu'), e);
+            });
+            
+            // Add left-click functionality (just to prevent issues)
+            newFolder.addEventListener('click', function(e) {
+                e.stopPropagation();
+                // Could add selection logic here later
+            });
+            
+            iconsContainer.appendChild(newFolder);
+            hideAllContextMenus();
+            
+            // Small animation to make it obvious
+            setTimeout(() => {
+                newFolder.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    newFolder.style.transform = 'scale(1)';
+                    newFolder.style.transition = 'transform 0.2s ease';
+                }, 200);
+            }, 100);
+        }
+
+        function createNewFile(type) {
+            const iconsContainer = document.getElementById('desktop-icons');
+            const newFile = document.createElement('div');
+            newFile.className = 'desktop-icon new-file-created';
+            newFile.innerHTML = `
+                <div style="font-size: 48px; margin-bottom: 5px;">📄</div>
+                <div class="desktop-icon-text">Neues Textdokument.txt</div>
+            `;
+            iconsContainer.appendChild(newFile);
+            hideAllContextMenus();
+        }
+
+        function renameFolder() {
+            const folderTextElement = document.querySelector('.new-folder-created .desktop-icon-text');
+            if (folderTextElement) {
+                const currentName = folderTextElement.textContent;
+                
+                // Create input field
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = currentName;
+                input.style.cssText = `
+                    background: white;
+                    color: black;
+                    border: 1px solid #0078d4;
+                    padding: 2px 4px;
+                    font-size: 12px;
+                    width: 100%;
+                    text-align: center;
+                    border-radius: 2px;
+                    outline: none;
+                    font-family: inherit;
+                    box-shadow: 0 0 3px rgba(0, 120, 212, 0.5);
+                `;
+                
+                // Replace text with input
+                folderTextElement.innerHTML = '';
+                folderTextElement.appendChild(input);
+                input.focus();
+                input.select();
+                
+                // Handle enter key or blur to confirm rename
+                const confirmRename = function() {
+                    const newName = input.value.trim() || 'Neuer Ordner';
+                    folderTextElement.textContent = newName;
+                    folderTextElement.parentElement.classList.add('folder-renamed');
+                    
+                    // Visual feedback
+                    const folderElement = folderTextElement.parentElement;
+                    folderElement.style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
+                    setTimeout(() => {
+                        folderElement.style.backgroundColor = '';
+                    }, 1000);
+                };
+                
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        confirmRename();
+                    } else if (e.key === 'Escape') {
+                        folderTextElement.textContent = currentName;
+                    }
+                });
+                
+                input.addEventListener('blur', confirmRename);
+            }
+            hideAllContextMenus();
+        }
+
+        function showFolderProperties() {
+            document.querySelector('.new-folder-created').classList.add('properties-shown');
+            hideAllContextMenus();
+            alert('Eigenschaften-Dialog würde hier geöffnet werden:\n\nName: Mein Ordner\nTyp: Dateiordner\nErstellt: ' + new Date().toLocaleString());
+        }
+
+        function refreshDesktop() {
+            hideAllContextMenus();
+        }
+
+        function showDisplaySettings() {
+            hideAllContextMenus();
+            alert('Anzeigeeinstellungen würden hier geöffnet werden.');
+        }
+
+        function showPersonalize() {
+            hideAllContextMenus();
+            alert('Anpassungsoptionen würden hier geöffnet werden.');
+        }
+
+        // Global variables for clipboard and undo functionality
+        let clipboard = null;
+        let lastAction = null;
+        
+        // Excel undo functionality
+        let excelUndoStack = [];
+        
+        function saveExcelState() {
+            const cells = ['a1', 'a2', 'b1', 'b2'];
+            const state = {};
+            cells.forEach(cellId => {
+                const cell = document.getElementById(cellId);
+                if (cell) {
+                    state[cellId] = cell.textContent;
+                }
+            });
+            excelUndoStack.push(state);
+            if (excelUndoStack.length > 10) { // Limit undo history
+                excelUndoStack.shift();
+            }
+        }
+        
+        function undoExcelAction() {
+            if (excelUndoStack.length > 1) {
+                excelUndoStack.pop(); // Remove current state
+                const previousState = excelUndoStack[excelUndoStack.length - 1];
+                
+                Object.keys(previousState).forEach(cellId => {
+                    const cell = document.getElementById(cellId);
+                    if (cell) {
+                        cell.textContent = previousState[cellId];
+                    }
+                });
+                
+                // Visual feedback
+                const table = document.querySelector('#lesson-container table');
+                if (table) {
+                    table.style.borderColor = '#28a745';
+                    setTimeout(() => {
+                        table.style.borderColor = '';
+                    }, 1000);
+                }
+            }
+        }
+
+        function setupDragAndDrop(element) {
+            element.draggable = true;
+            let startX, startY;
+            
+            element.addEventListener('dragstart', function(e) {
+                const rect = element.getBoundingClientRect();
+                const desktopRect = document.getElementById('desktop-simulator').getBoundingClientRect();
+                
+                startX = rect.left - desktopRect.left;
+                startY = rect.top - desktopRect.top;
+                
+                e.dataTransfer.setData('text/plain', element.id);
+                element.style.opacity = '0.5';
+                element.classList.add('dragging');
+            });
+            
+            element.addEventListener('dragend', function(e) {
+                element.style.opacity = '1';
+                element.classList.remove('dragging');
+            });
+
+            // Setup desktop as drop zone
+            const desktop = document.getElementById('desktop-simulator');
+            
+            desktop.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+            });
+            
+            desktop.addEventListener('drop', function(e) {
+                e.preventDefault();
+                const draggedId = e.dataTransfer.getData('text/plain');
+                const draggedElement = document.getElementById(draggedId);
+                
+                if (draggedElement) {
+                    const desktopRect = desktop.getBoundingClientRect();
+                    const newX = e.clientX - desktopRect.left - 40; // Center the icon
+                    const newY = e.clientY - desktopRect.top - 50;
+                    
+                    // Constrain to desktop bounds
+                    const constrainedX = Math.max(10, Math.min(newX, desktopRect.width - 90));
+                    const constrainedY = Math.max(10, Math.min(newY, desktopRect.height - 110));
+                    
+                    draggedElement.style.position = 'absolute';
+                    draggedElement.style.left = constrainedX + 'px';
+                    draggedElement.style.top = constrainedY + 'px';
+                    
+                    // Check if position actually changed
+                    if (Math.abs(constrainedX - startX) > 20 || Math.abs(constrainedY - startY) > 20) {
+                        draggedElement.classList.add('folder-moved');
+                        
+                        // Visual feedback
+                        draggedElement.style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
+                        setTimeout(() => {
+                            draggedElement.style.backgroundColor = '';
+                        }, 1000);
+                    }
+                }
+            });
+        }
+
+        function copyFolder() {
+            clipboard = {
+                type: 'folder',
+                name: 'Mein Ordner',
+                action: 'copy'
+            };
+            hideAllContextMenus();
+        }
+
+        function pasteFolder() {
+            if (clipboard && clipboard.type === 'folder') {
+                const iconsContainer = document.getElementById('desktop-icons');
+                
+                // Check if copy already exists
+                if (document.getElementById('copied-folder')) {
+                    hideAllContextMenus();
+                    return;
+                }
+                
+                const copiedFolder = document.createElement('div');
+                copiedFolder.className = 'desktop-icon folder-copied';
+                copiedFolder.id = 'copied-folder';
+                copiedFolder.style.cssText = 'position: absolute; left: 120px; top: 140px;';
+                copiedFolder.innerHTML = `
+                    <div style="font-size: 48px; margin-bottom: 5px;">📁</div>
+                    <div class="desktop-icon-text">Mein Ordner - Kopie</div>
+                `;
+                
+                // Add event listeners
+                copiedFolder.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showContextMenu(document.getElementById('folder-context-menu'), e);
+                });
+                
+                setupDragAndDrop(copiedFolder);
+                iconsContainer.appendChild(copiedFolder);
+                
+                // Save action for undo
+                lastAction = {
+                    type: 'paste',
+                    element: copiedFolder
+                };
+                
+                // Visual feedback
+                copiedFolder.style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
+                setTimeout(() => {
+                    copiedFolder.style.backgroundColor = '';
+                }, 1000);
+            }
+            hideAllContextMenus();
+        }
+
+        function undoLastAction() {
+            if (lastAction && lastAction.type === 'paste' && lastAction.element) {
+                // Remove the copied folder
+                lastAction.element.remove();
+                lastAction = null;
+                
+                // Mark undo as done
+                document.body.classList.add('action-undone');
+                
+                // Visual feedback
+                const desktop = document.getElementById('desktop-simulator');
+                desktop.style.borderColor = '#28a745';
+                setTimeout(() => {
+                    desktop.style.borderColor = '';
+                }, 1000);
+            }
+        }
+
+        function openFolder() {
+            hideAllContextMenus();
+            alert('Ordner würde hier geöffnet werden.');
+        }
+
+        function deleteFolder() {
+            hideAllContextMenus();
+            if (confirm('Möchten Sie diesen Ordner wirklich löschen?')) {
+                // Simulate delete - in real Windows, this would move to recycle bin
+                alert('Ordner wurde in den Papierkorb verschoben.');
+            }
+        }
+
+        function checkExplorerTask() {
+            const task = explorerTasks[currentExplorerTaskIndex];
+            const feedback = document.getElementById('explorer-feedback');
+            
+            if (task.checkFunction()) {
+                feedback.textContent = task.successMessage;
+                feedback.className = 'mt-3 text-center font-semibold text-green-600';
+                document.getElementById('explorer-check-btn').style.display = 'none';
+                document.getElementById('explorer-next-btn').style.display = 'inline-block';
+            } else {
+                feedback.textContent = task.failMessage;
+                feedback.className = 'mt-3 text-center font-semibold text-red-600';
+            }
+        }
+
+        function nextExplorerTask() {
+            currentExplorerTaskIndex++;
+            loadExplorerTask(currentExplorerTaskIndex);
+        }
+
+        function jumpToExplorerTask(taskIndex) {
+            if (taskIndex >= 0 && taskIndex < explorerTasks.length) {
+                currentExplorerTaskIndex = taskIndex;
+                loadExplorerTask(taskIndex);
+            }
+        }
+
+        function showExplorerCongratulations() {
+            const container = document.getElementById('explorer-task-container');
+            container.innerHTML = `
+                <div class="text-center p-8 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-lg border-2 border-indigo-500">
+                    <div class="text-6xl mb-4">🎉</div>
+                    <h2 class="text-3xl font-bold text-indigo-800 mb-4">Herzlichen Glückwunsch!</h2>
+                    <p class="text-xl text-indigo-700 mb-6">Sie haben alle ${explorerTasks.length} Explorer-Aufgaben erfolgreich abgeschlossen!</p>
+                    
+                    <div class="bg-white p-4 rounded-lg shadow-md mb-6">
+                        <h3 class="text-lg font-semibold mb-3 text-gray-800">Sie können jetzt:</h3>
+                        <div class="grid grid-cols-1 gap-2 text-sm text-left max-w-md mx-auto">
+                            <div class="p-2 bg-gray-50 rounded">✓ Ordner erstellen und verwalten</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ Dateien umbenennen</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ Kontextmenüs verwenden</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ Dateien und Ordner verschieben</div>
+                            <div class="p-2 bg-gray-50 rounded">✓ Eigenschaften anzeigen</div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <button onclick="currentExplorerTaskIndex = 0; loadExplorerTask(0)" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">
+                            🔄 Nochmal üben
+                        </button>
+                        <div class="flex justify-center space-x-4 mt-4">
+                            <button onclick="changeTab('word')" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 text-lg font-semibold">
+                                📝 Zu Word-Übungen
+                            </button>
+                            <button onclick="changeTab('excel')" class="bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 text-lg font-semibold">
+                                📊 Zu Excel-Übungen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initialize sections when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            updateQuizDisplay();
+            loadWordTask(0); // Start Word with first task
+            loadExcelTask(0); // Start Excel with first task
+            loadExplorerTask(0); // Start Explorer with first task
+            
+            // Start with welcome page as default
+            changeTab('welcome');
+        });
+
+        // Hardware Functions
+        function saveHardwareAnswers() {
+            const fields = ['hardware_field_1', 'hardware_field_2', 'hardware_field_3', 'hardware_field_4', 'hardware_field_5'];
+            const answers = {};
+            
+            fields.forEach((fieldId, index) => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    answers[`field_${index + 1}`] = field.value;
+                    // Automatisches Speichern im localStorage
+                    localStorage.setItem(`hardware_answer_${index + 1}`, field.value);
+                }
+            });
+            
+            console.log('Hardware Antworten gespeichert:', answers);
+            alert('✅ Hardware-Antworten wurden erfolgreich gespeichert!');
+        }
+
+        function printHardwarePage() {
+            // Nur den Hardware-Bereich drucken
+            const hardwareSection = document.getElementById('hardware');
+            const originalContents = document.body.innerHTML;
+            const printContents = hardwareSection.innerHTML;
+            
+            document.body.innerHTML = `
+                <div style="padding: 20px;">
+                    <h1>Hardware-Grundlagen - Aufgabe 1</h1>
+                    ${printContents}
+                </div>
+            `;
+            
+            window.print();
+            document.body.innerHTML = originalContents;
+            
+            // Event Listeners wieder hinzufügen
+            loadHardwareAnswers();
+        }
+
+        function loadHardwareAnswers() {
+            // Gespeicherte Antworten laden
+            for (let i = 1; i <= 5; i++) {
+                const savedAnswer = localStorage.getItem(`hardware_answer_${i}`);
+                const field = document.getElementById(`hardware_field_${i}`);
+                if (field && savedAnswer) {
+                    field.value = savedAnswer;
+                }
+            }
+            
+            // Event Listeners für automatisches Speichern
+            for (let i = 1; i <= 5; i++) {
+                const field = document.getElementById(`hardware_field_${i}`);
+                if (field) {
+                    field.addEventListener('input', function() {
+                        localStorage.setItem(`hardware_answer_${i}`, this.value);
+                    });
+                }
+            }
+        }
+
+        // Hardware-Antworten beim Laden der Seite laden
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHardwareAnswers();
+        });
+    </script>
+
+</body>
+</html>
