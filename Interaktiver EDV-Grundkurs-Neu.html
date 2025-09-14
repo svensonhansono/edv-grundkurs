@@ -203,6 +203,9 @@
                 <button onclick="changeTab('html')" class="tab py-3 px-4 text-center text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700 transition">
                     HTML-Grundlagen
                 </button>
+                <button onclick="changeTab('html2')" class="tab py-3 px-4 text-center text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700 transition">
+                    HTML-Grundlagen 2
+                </button>
             </nav>
         </div>
 
@@ -213,7 +216,7 @@
                 <h2 class="text-3xl font-bold text-gray-800 mb-4">Willkommen zum EDV-Grundkurs</h2>
                 <p class="text-xl text-gray-600 mb-8">Interaktive Übungen für Explorer, Shortcuts, Word & Excel</p>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
                     <div class="bg-blue-50 p-6 rounded-lg border hover:shadow-lg transition cursor-pointer" onclick="changeTab('explorer')">
                         <div class="text-4xl mb-3">📁</div>
                         <h3 class="text-lg font-semibold text-blue-800 mb-2">Explorer-Grundlagen</h3>
@@ -248,6 +251,12 @@
                         <div class="text-4xl mb-3">🌐</div>
                         <h3 class="text-lg font-semibold text-red-800 mb-2">HTML-Grundlagen</h3>
                         <p class="text-sm text-red-600">Webseiten erstellen lernen</p>
+                    </div>
+                    
+                    <div class="bg-pink-50 p-6 rounded-lg border hover:shadow-lg transition cursor-pointer" onclick="changeTab('html2')">
+                        <div class="text-4xl mb-3">🛒</div>
+                        <h3 class="text-lg font-semibold text-pink-800 mb-2">HTML-Grundlagen 2</h3>
+                        <p class="text-sm text-pink-600">Einkaufsliste mit Tabellen</p>
                     </div>
                 </div>
                 
@@ -719,6 +728,99 @@
                     Weiter →
                 </button>
             </div>
+
+            <!-- Step Navigation Kacheln -->
+            <div class="mt-4 p-3 bg-red-50 border border-red-200 rounded">
+                <p class="text-sm text-gray-600 mb-2"><strong>Schritt-Navigation:</strong> Direkt zu Schritt springen:</p>
+                <div class="flex flex-wrap gap-1 justify-center">
+                    <button onclick="jumpToHTMLStep(0)" class="px-2 py-1 text-xs bg-red-200 hover:bg-red-300 rounded">Intro</button>
+                    <button onclick="jumpToHTMLStep(1)" class="px-2 py-1 text-xs bg-red-200 hover:bg-red-300 rounded">1</button>
+                    <button onclick="jumpToHTMLStep(2)" class="px-2 py-1 text-xs bg-red-200 hover:bg-red-300 rounded">2</button>
+                    <button onclick="jumpToHTMLStep(3)" class="px-2 py-1 text-xs bg-red-200 hover:bg-red-300 rounded">3</button>
+                    <button onclick="jumpToHTMLStep(4)" class="px-2 py-1 text-xs bg-red-200 hover:bg-red-300 rounded">4</button>
+                    <button onclick="jumpToHTMLStep(5)" class="px-2 py-1 text-xs bg-red-200 hover:bg-red-300 rounded">5</button>
+                    <button onclick="jumpToHTMLStep(6)" class="px-2 py-1 text-xs bg-red-200 hover:bg-red-300 rounded">6</button>
+                    <button onclick="jumpToHTMLStep(7)" class="px-2 py-1 text-xs bg-red-200 hover:bg-red-300 rounded">Fertig</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- HTML2 Section -->
+        <main id="html2" class="bg-white p-6 rounded-lg shadow-md hidden">
+            <!-- Progress Bar -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-xl font-semibold text-pink-800">HTML-Grundlagen 2: Einkaufsliste</h2>
+                    <span id="html2-progress" class="text-sm text-gray-600">Schritt 1 von 10</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div id="html2-progress-bar" class="bg-pink-600 h-2 rounded-full transition-all duration-300" style="width: 10%"></div>
+                </div>
+            </div>
+
+            <!-- Tutorial Steps -->
+            <div id="html2-tutorial-container">
+                <!-- Step Content wird hier dynamisch eingefügt -->
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mt-6">
+                <!-- HTML Editor -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">🖥️ HTML-Code Editor</h3>
+                    <div class="mb-4">
+                        <textarea id="html2-editor" class="w-full h-64 p-3 border border-gray-300 rounded-lg font-mono text-sm" 
+                                  placeholder="Geben Sie hier Ihren HTML-Code ein..."></textarea>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="html2-check-btn" onclick="checkHTML2Step()" class="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700">
+                            Schritt prüfen
+                        </button>
+                        <button id="html2-hint-btn" onclick="showHint2()" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
+                            💡 Tipp
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- HTML Vorschau -->
+                <div class="bg-white border rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3 p-4 border-b">🛒 Einkaufsliste Vorschau</h3>
+                    <div id="html2-preview" class="p-4 min-h-64" style="background: white; border: 1px solid #e5e7eb;">
+                        <p class="text-gray-400 italic">Ihre Einkaufsliste erscheint hier...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feedback Area -->
+            <div id="html2-feedback" class="mt-4 p-4 rounded-lg hidden">
+                <!-- Feedback wird hier angezeigt -->
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between items-center mt-6">
+                <button id="html2-prev-btn" onclick="previousHTML2Step()" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    ← Zurück
+                </button>
+                <button id="html2-next-btn" onclick="nextHTML2Step()" class="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    Weiter →
+                </button>
+            </div>
+
+            <!-- Step Navigation Kacheln -->
+            <div class="mt-4 p-3 bg-pink-50 border border-pink-200 rounded">
+                <p class="text-sm text-gray-600 mb-2"><strong>Schritt-Navigation:</strong> Direkt zu Schritt springen:</p>
+                <div class="flex flex-wrap gap-1 justify-center">
+                    <button onclick="jumpToHTML2Step(0)" class="px-2 py-1 text-xs bg-pink-200 hover:bg-pink-300 rounded">Intro</button>
+                    <button onclick="jumpToHTML2Step(1)" class="px-2 py-1 text-xs bg-pink-200 hover:bg-pink-300 rounded">1</button>
+                    <button onclick="jumpToHTML2Step(2)" class="px-2 py-1 text-xs bg-pink-200 hover:bg-pink-300 rounded">2</button>
+                    <button onclick="jumpToHTML2Step(3)" class="px-2 py-1 text-xs bg-pink-200 hover:bg-pink-300 rounded">3</button>
+                    <button onclick="jumpToHTML2Step(4)" class="px-2 py-1 text-xs bg-pink-200 hover:bg-pink-300 rounded">4</button>
+                    <button onclick="jumpToHTML2Step(5)" class="px-2 py-1 text-xs bg-pink-200 hover:bg-pink-300 rounded">5</button>
+                    <button onclick="jumpToHTML2Step(6)" class="px-2 py-1 text-xs bg-pink-200 hover:bg-pink-300 rounded">6</button>
+                    <button onclick="jumpToHTML2Step(7)" class="px-2 py-1 text-xs bg-pink-200 hover:bg-pink-300 rounded">7</button>
+                    <button onclick="jumpToHTML2Step(8)" class="px-2 py-1 text-xs bg-pink-200 hover:bg-pink-300 rounded">8</button>
+                    <button onclick="jumpToHTML2Step(9)" class="px-2 py-1 text-xs bg-pink-200 hover:bg-pink-300 rounded">Fertig</button>
+                </div>
+            </div>
         </main>
 
         <!-- Shortcuts Section -->
@@ -841,7 +943,9 @@
             excel: document.getElementById('excel'),
             shortcuts: document.getElementById('shortcuts'),
             explorer: document.getElementById('explorer'),
-            hardware: document.getElementById('hardware')
+            hardware: document.getElementById('hardware'),
+            html: document.getElementById('html'),
+            html2: document.getElementById('html2')
         };
 
         function changeTab(tabName) {
@@ -861,6 +965,8 @@
                 // HTML Tutorial initialisieren wenn HTML-Tab geöffnet wird
                 if (tabName === 'html') {
                     setTimeout(initHTMLTutorial, 100);
+                } else if (tabName === 'html2') {
+                    setTimeout(initHTML2Tutorial, 100);
                 }
             }
         }
@@ -3339,25 +3445,25 @@
         let currentHTMLStep = 0;
         const htmlSteps = [
             {
-                title: "Schritt 1: DOCTYPE Deklaration",
-                description: "Jede HTML-Seite beginnt mit einer DOCTYPE-Deklaration. Diese sagt dem Browser, dass es sich um HTML5 handelt.",
-                instruction: "Geben Sie die DOCTYPE-Deklaration ein:",
-                example: "<!DOCTYPE html>",
-                hint: "Tipp: Die DOCTYPE-Deklaration beginnt mit <!DOCTYPE und endet mit >",
-                validation: (code) => code.trim().toLowerCase().includes('<!doctype html>'),
-                success: "✅ Perfekt! Sie haben die DOCTYPE-Deklaration hinzugefügt!"
+                title: "Einführung: Was ist HTML?",
+                description: "HTML steht für <strong>HyperText Markup Language</strong> und ist die Grundsprache des Internets!<br><br><strong>🌍 Wer nutzt HTML?</strong><br>• <strong>Über 1,8 Milliarden Webseiten</strong> weltweit nutzen HTML<br>• Jede Webseite die Sie besuchen: Google, Facebook, YouTube, Wikipedia<br>• Alle Smartphones, Tablets und Computer können HTML anzeigen<br><br><strong>🔧 Wie funktioniert HTML?</strong><br>• HTML ist wie <strong>Bauanleitung</strong> für Webseiten<br>• Mit <strong>Tags</strong> (Befehlen in &lt; &gt;) sagen Sie dem Browser was er anzeigen soll<br>• Der Browser 'liest' Ihr HTML und zeigt es als schöne Webseite an<br><br><strong>📝 Was können Sie mit HTML machen?</strong><br>• Texte, Überschriften und Absätze erstellen<br>• Bilder und Links einfügen<br>• Listen und Tabellen aufbauen<br>• Die Grundlage für jede moderne Webseite schaffen<br><br><strong>🛠️ So funktioniert unser Tutorial:</strong><br>• <strong>Links:</strong> Der <strong>HTML-Code Editor</strong> - hier tippen Sie Ihren Code ein<br>• <strong>Rechts:</strong> Die <strong>Live-Vorschau</strong> - hier sehen Sie sofort wie Ihre Webseite aussieht<br>• <strong>Magisch:</strong> Was Sie links eintippen, erscheint sofort rechts als echte Webseite!<br>• <strong>Schritt für Schritt:</strong> Wir bauen zusammen eine komplette Webseite auf",
+                instruction: "Klicken Sie auf 'Weiter', um mit Ihrer ersten HTML-Seite zu beginnen!",
+                example: "Beispiel einer einfachen Webseite:\n\n<!DOCTYPE html>\n<html>\n<head>\n  <title>Meine Webseite</title>\n</head>\n<body>\n  <h1>Willkommen!</h1>\n  <p>Das ist meine erste Webseite.</p>\n</body>\n</html>",
+                hint: "HTML ist überall um uns herum - jede Webseite nutzt es als Grundlage!",
+                validation: () => true, // Immer erfolgreich, da nur Info-Schritt
+                success: "🚀 Bereit für HTML? Lassen Sie uns loslegen!"
             },
             {
-                title: "Schritt 2: HTML-Tag",
-                description: "Das <html>-Tag umschließt den gesamten Inhalt der Webseite. Es ist das Wurzelelement.",
-                instruction: "Fügen Sie das <html>-Tag hinzu (öffnend und schließend):",
+                title: "Schritt 1: HTML-Grundgerüst",
+                description: "Jetzt erstellen wir das komplette HTML-Grundgerüst. Das beginnt mit der DOCTYPE-Deklaration (dem 'Ausweis') und dem HTML-Tag (dem Rahmen).<br><br><strong>Was passiert hier?</strong><br>• <strong>&lt;!DOCTYPE html&gt;</strong> sagt dem Browser: 'Das ist HTML5'<br>• <strong>&lt;html&gt;</strong> ist der Rahmen für alles was kommt<br>• <strong>&lt;/html&gt;</strong> schließt den Rahmen wieder",
+                instruction: "Geben Sie das komplette HTML-Grundgerüst ein:",
                 example: "<!DOCTYPE html>\n<html>\n</html>",
-                hint: "Tipp: Vergessen Sie nicht das schließende </html>-Tag am Ende!",
-                validation: (code) => code.includes('<html>') && code.includes('</html>'),
+                hint: "Tipp: Beginnen Sie mit <!DOCTYPE html> und dann <html></html>",
+                validation: (code) => code.toLowerCase().includes('<!doctype html>') && code.includes('<html>') && code.includes('</html>'),
                 success: "✅ Großartig! Das HTML-Grundgerüst steht!"
             },
             {
-                title: "Schritt 3: Head-Bereich",
+                title: "Schritt 2: Head-Bereich",
                 description: "Der <head>-Bereich enthält Metainformationen über die Webseite, die nicht direkt sichtbar sind.",
                 instruction: "Fügen Sie den <head>-Bereich zwischen den <html>-Tags hinzu:",
                 example: "<!DOCTYPE html>\n<html>\n<head>\n</head>\n</html>",
@@ -3366,47 +3472,47 @@
                 success: "✅ Super! Der Head-Bereich ist da!"
             },
             {
-                title: "Schritt 4: Title-Element",
-                description: "Das <title>-Element bestimmt den Text, der im Browser-Tab angezeigt wird.",
-                instruction: "Fügen Sie ein <title>-Element im Head-Bereich hinzu:",
-                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine erste Webseite</title>\n</head>\n</html>",
-                hint: "Tipp: Das <title> gehört zwischen <head> und </head>",
-                validation: (code) => code.includes('<title>') && code.includes('</title>'),
-                success: "✅ Wunderbar! Ihre Seite hat jetzt einen Titel!"
-            },
-            {
-                title: "Schritt 5: Body-Bereich",
-                description: "Der <body>-Bereich enthält den sichtbaren Inhalt Ihrer Webseite.",
-                instruction: "Fügen Sie den <body>-Bereich nach dem </head>-Tag hinzu:",
+                title: "Schritt 3: Title und Body komplett",
+                description: "Jetzt machen wir die HTML-Seite komplett! Das <title>-Element bestimmt den Text im Browser-Tab. Der <body>-Bereich ist für den sichtbaren Inhalt.<br><br><strong>Was passiert:</strong><br>• <title> erscheint im Browser-Tab oben<br>• <body> ist der Bereich für sichtbaren Inhalt<br>• Jetzt ist das HTML-Grundgerüst fertig!",
+                instruction: "Kopieren Sie den kompletten Code aus dem Beispiel:",
                 example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine erste Webseite</title>\n</head>\n<body>\n</body>\n</html>",
-                hint: "Tipp: Der <body> kommt NACH dem </head>-Tag!",
-                validation: (code) => code.includes('<body>') && code.includes('</body>'),
-                success: "✅ Fantastisch! Die Grundstruktur ist komplett!"
+                hint: "Tipp: Kopieren Sie alles aus dem Beispiel - so haben Sie das komplette HTML-Grundgerüst!",
+                validation: (code) => code.includes('<title>') && code.includes('</title>') && code.includes('<body>') && code.includes('</body>'),
+                success: "✅ Perfekt! Das HTML-Grundgerüst ist komplett!"
             },
             {
-                title: "Schritt 6: Erste Überschrift",
-                description: "Überschriften strukturieren den Inhalt. <h1> ist die größte Überschrift.",
-                instruction: "Fügen Sie eine <h1>-Überschrift im Body-Bereich hinzu:",
+                title: "Schritt 4: Erste Überschrift",
+                description: "Jetzt kommt der sichtbare Inhalt! Überschriften strukturieren den Inhalt. <h1> ist die größte und wichtigste Überschrift - wie die Hauptüberschrift einer Zeitung.",
+                instruction: "Fügen Sie eine <h1>-Überschrift zwischen die <body>-Tags ein:",
                 example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine erste Webseite</title>\n</head>\n<body>\n    <h1>Willkommen auf meiner Webseite!</h1>\n</body>\n</html>",
-                hint: "Tipp: <h1> kommt zwischen <body> und </body>",
+                hint: "Tipp: <h1> kommt zwischen <body> und </body> - Sie können einen eigenen Text wählen!",
                 validation: (code) => code.includes('<h1>') && code.includes('</h1>'),
                 success: "✅ Toll! Ihre erste Überschrift ist sichtbar!"
             },
             {
-                title: "Schritt 7: Absatz hinzufügen",
-                description: "Absätze werden mit <p>-Tags erstellt. Sie enthalten normalen Text.",
+                title: "Schritt 5: Absatz hinzufügen",
+                description: "Absätze werden mit <p>-Tags erstellt. Sie enthalten normalen Text - wie ein Absatz in einem Buch. Das ist der häufigste HTML-Tag überhaupt!",
                 instruction: "Fügen Sie einen <p>-Absatz unter der Überschrift hinzu:",
                 example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine erste Webseite</title>\n</head>\n<body>\n    <h1>Willkommen auf meiner Webseite!</h1>\n    <p>Das ist mein erster Absatz in HTML!</p>\n</body>\n</html>",
-                hint: "Tipp: Der <p>-Tag kommt nach dem </h1>-Tag",
+                hint: "Tipp: Der <p>-Tag kommt nach dem </h1>-Tag - Sie können eigenen Text schreiben!",
                 validation: (code) => code.includes('<p>') && code.includes('</p>'),
                 success: "✅ Perfekt! Sie haben Ihren ersten Absatz erstellt!"
             },
             {
-                title: "Schritt 8: Fertig! 🎉",
-                description: "Herzlichen Glückwunsch! Sie haben Ihre erste vollständige HTML-Seite erstellt!",
-                instruction: "Ihre HTML-Seite ist komplett. Schauen Sie sich das Ergebnis in der Vorschau an!",
-                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine erste Webseite</title>\n</head>\n<body>\n    <h1>Willkommen auf meiner Webseite!</h1>\n    <p>Das ist mein erster Absatz in HTML!</p>\n</body>\n</html>",
-                hint: "Sie können jetzt weitere Elemente hinzufügen: <h2>, Listen, Links, etc.",
+                title: "Schritt 6: Zweite Überschrift",
+                description: "Webseiten haben oft mehrere Überschriften um den Inhalt zu gliedern. <h2> ist eine kleinere Überschrift als <h1> - wie Unterüberschriften in einem Buch.",
+                instruction: "Fügen Sie eine <h2>-Überschrift nach dem Absatz hinzu:",
+                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine erste Webseite</title>\n</head>\n<body>\n    <h1>Willkommen auf meiner Webseite!</h1>\n    <p>Das ist mein erster Absatz in HTML!</p>\n    <h2>Über mich</h2>\n</body>\n</html>",
+                hint: "Tipp: <h2> kommt nach dem </p>-Tag - probieren Sie verschiedene Überschriften aus!",
+                validation: (code) => code.includes('<h2>') && code.includes('</h2>'),
+                success: "✅ Super! Ihre Webseite bekommt Struktur!"
+            },
+            {
+                title: "Schritt 7: Fertig! 🎉",
+                description: "Herzlichen Glückwunsch! Sie haben Ihre erste vollständige HTML-Seite erstellt! Sie können jetzt:<br>• HTML-Grundstruktur aufbauen<br>• Überschriften und Absätze erstellen<br>• Eine echte Webseite von Grund auf schreiben<br><br><strong>Was kommt als nächstes?</strong><br>Sie können jetzt weitere HTML-Elemente lernen: Listen, Links, Bilder, Tabellen und vieles mehr!",
+                instruction: "Ihre HTML-Grundlagen sind komplett! Schauen Sie sich Ihr Meisterwerk in der Vorschau an!",
+                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine erste Webseite</title>\n</head>\n<body>\n    <h1>Willkommen auf meiner Webseite!</h1>\n    <p>Das ist mein erster Absatz in HTML!</p>\n    <h2>Über mich</h2>\n    <p>Hier könnte mehr Text über Sie stehen.</p>\n</body>\n</html>",
+                hint: "Experimentieren Sie gerne weiter: Fügen Sie mehr <p>, <h3>, oder anderen Text hinzu!",
                 validation: () => true,
                 success: "🎉 Glückwunsch! Sie sind jetzt HTML-Grundlagen-Profi!"
             }
@@ -3428,6 +3534,12 @@
             const step = htmlSteps[currentHTMLStep];
             const container = document.getElementById('html-tutorial-container');
             
+            // HTML-Code für Anzeige escapen
+            const escapedExample = step.example
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+            
             container.innerHTML = `
                 <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-500 mb-4">
                     <h3 class="text-lg font-semibold text-red-800 mb-2">${step.title}</h3>
@@ -3435,7 +3547,7 @@
                     <p class="font-medium text-red-800">${step.instruction}</p>
                     <div class="mt-3 bg-white p-3 rounded border">
                         <p class="text-sm text-gray-600 mb-2">Beispiel:</p>
-                        <code class="text-sm bg-gray-100 p-2 rounded block whitespace-pre">${step.example}</code>
+                        <code class="text-sm bg-gray-100 p-2 rounded block whitespace-pre font-mono">${escapedExample}</code>
                     </div>
                 </div>
             `;
@@ -3512,6 +3624,15 @@
                 const feedbackDiv = document.getElementById('html-feedback');
                 feedbackDiv.classList.add('hidden');
                 
+                // Editor leeren für neuen Schritt
+                const editor = document.getElementById('html-editor');
+                if (editor) {
+                    editor.value = '';
+                }
+                
+                // Vorschau zurücksetzen
+                updateHTMLPreview();
+                
                 // Next Button wieder deaktivieren
                 const nextBtn = document.getElementById('html-next-btn');
                 if (nextBtn && currentHTMLStep < htmlSteps.length - 1) {
@@ -3545,6 +3666,309 @@
             if (document.getElementById('html').style.display !== 'none') {
                 initHTMLTutorial();
             }
+        }
+
+        // Jump-to-step Funktion für direkte Navigation
+        function jumpToHTMLStep(stepIndex) {
+            currentHTMLStep = stepIndex;
+            showHTMLStep();
+            updateHTMLProgress();
+            
+            // Feedback verstecken
+            const feedbackDiv = document.getElementById('html-feedback');
+            feedbackDiv.classList.add('hidden');
+            
+            // Editor leeren für neuen Schritt
+            const editor = document.getElementById('html-editor');
+            if (editor) {
+                editor.value = '';
+            }
+            
+            // Vorschau zurücksetzen
+            updateHTMLPreview();
+            
+            // Navigation Buttons aktualisieren
+            updateNavigationButtons();
+        }
+
+        // HTML2 Tutorial System - Einkaufsliste
+        let currentHTML2Step = 0;
+        const html2Steps = [
+            {
+                title: "Einführung: Einkaufsliste erstellen",
+                description: "Willkommen zu HTML-Grundlagen 2! Hier lernen Sie fortgeschrittene HTML-Elemente durch das Erstellen einer interaktiven Einkaufsliste.<br><br><strong>🛒 Was werden wir bauen?</strong><br>• Eine professionelle Einkaufsliste mit <strong>Name</strong>, <strong>Stückzahl</strong>, <strong>Artikel</strong> und <strong>Preis</strong><br>• <strong>HTML-Tabellen</strong> für strukturierte Daten<br>• <strong>Links zu Online-Shops</strong> für jeden Artikel<br>• <strong>Formulare</strong> zum Hinzufügen neuer Artikel<br><br><strong>🎯 Neue HTML-Elemente die Sie lernen:</strong><br>• <strong>&lt;table&gt;</strong> - Tabellen für strukturierte Daten<br>• <strong>&lt;form&gt;</strong> - Eingabeformulare<br>• <strong>&lt;input&gt;</strong> - verschiedene Eingabefelder<br>• <strong>&lt;a&gt;</strong> - Links zu anderen Webseiten<br>• <strong>&lt;button&gt;</strong> - interaktive Schaltflächen",
+                instruction: "Klicken Sie auf 'Weiter', um Ihre erste Einkaufsliste zu erstellen!",
+                example: "Beispiel der fertigen Einkaufsliste:\n\n<!DOCTYPE html>\n<html>\n<head>\n  <title>Meine Einkaufsliste</title>\n</head>\n<body>\n  <h1>🛒 Meine Einkaufsliste</h1>\n  <table border='1'>\n    <tr>\n      <th>Name</th>\n      <th>Stück</th>\n      <th>Artikel</th>\n      <th>Preis</th>\n      <th>Link</th>\n    </tr>\n    <tr>\n      <td>Max</td>\n      <td>2</td>\n      <td>Brot</td>\n      <td>3,50€</td>\n      <td><a href='#'>Shop</a></td>\n    </tr>\n  </table>\n</body>\n</html>",
+                hint: "Sie werden eine echte Einkaufsliste erstellen, die Sie im Alltag verwenden können!",
+                validation: () => true,
+                success: "🚀 Bereit für HTML-Tabellen und Formulare? Los geht's!"
+            },
+            {
+                title: "Schritt 1: HTML-Grundgerüst für Einkaufsliste",
+                description: "Zuerst erstellen wir das HTML-Grundgerüst für unsere Einkaufsliste. Wir beginnen mit der bekannten Struktur, aber diesmal mit einem aussagekräftigen Titel.",
+                instruction: "Erstellen Sie das HTML-Grundgerüst mit dem Titel 'Meine Einkaufsliste':",
+                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine Einkaufsliste</title>\n</head>\n<body>\n</body>\n</html>",
+                hint: "Verwenden Sie die bekannte HTML-Struktur aus HTML-Grundlagen 1!",
+                validation: (code) => code.toLowerCase().includes('<!doctype html>') && code.includes('<html>') && code.includes('</html>') && code.includes('<head>') && code.includes('</head>') && code.includes('<body>') && code.includes('</body>') && code.toLowerCase().includes('einkaufsliste'),
+                success: "✅ Perfekt! Das Grundgerüst für die Einkaufsliste steht!"
+            },
+            {
+                title: "Schritt 2: Hauptüberschrift mit Emoji",
+                description: "Jede gute Einkaufsliste braucht eine ansprechende Überschrift! Wir verwenden ein Einkaufswagen-Emoji 🛒 um die Liste visuell interessanter zu machen.",
+                instruction: "Fügen Sie eine h1-Überschrift mit Emoji hinzu:",
+                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine Einkaufsliste</title>\n</head>\n<body>\n    <h1>🛒 Meine Einkaufsliste</h1>\n</body>\n</html>",
+                hint: "Kopieren Sie das Einkaufswagen-Emoji 🛒 aus dem Beispiel!",
+                validation: (code) => code.includes('<h1>') && code.includes('🛒') && code.toLowerCase().includes('einkaufsliste'),
+                success: "✅ Super! Ihre Einkaufsliste hat jetzt eine ansprechende Überschrift!"
+            },
+            {
+                title: "Schritt 3: Tabelle erstellen",
+                description: "Jetzt erstellen wir eine HTML-Tabelle! Tabellen sind perfekt für strukturierte Daten wie Einkaufslisten. Das <strong>&lt;table&gt;</strong>-Element ist der Container für unsere Tabelle.",
+                instruction: "Fügen Sie eine Tabelle mit border='1' hinzu:",
+                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine Einkaufsliste</title>\n</head>\n<body>\n    <h1>🛒 Meine Einkaufsliste</h1>\n    <table border='1'>\n    </table>\n</body>\n</html>",
+                hint: "Das border='1' Attribut macht die Tabellenlinien sichtbar!",
+                validation: (code) => code.includes('<table') && code.includes('</table>') && code.includes('border'),
+                success: "✅ Großartig! Die Tabellen-Struktur ist erstellt!"
+            },
+            {
+                title: "Schritt 4: Tabellenkopf mit Spalten",
+                description: "Jede Tabelle braucht einen Kopf mit Spaltenüberschriften! Wir verwenden <strong>&lt;tr&gt;</strong> für Zeilen und <strong>&lt;th&gt;</strong> für Kopfzellen. Unsere Spalten: Name, Stück, Artikel, Preis, Link.",
+                instruction: "Fügen Sie den Tabellenkopf mit 5 Spalten hinzu:",
+                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine Einkaufsliste</title>\n</head>\n<body>\n    <h1>🛒 Meine Einkaufsliste</h1>\n    <table border='1'>\n        <tr>\n            <th>Name</th>\n            <th>Stück</th>\n            <th>Artikel</th>\n            <th>Preis</th>\n            <th>Link</th>\n        </tr>\n    </table>\n</body>\n</html>",
+                hint: "<tr> = Table Row (Zeile), <th> = Table Header (Kopfzelle)",
+                validation: (code) => code.includes('<tr>') && code.includes('<th>') && code.includes('Name') && code.includes('Stück') && code.includes('Artikel') && code.includes('Preis') && code.includes('Link'),
+                success: "✅ Perfekt! Die Tabellenspalten sind definiert!"
+            },
+            {
+                title: "Schritt 5: Erste Datenzeile",
+                description: "Jetzt fügen wir echte Daten hinzu! Mit <strong>&lt;td&gt;</strong> erstellen wir normale Tabellenzellen. Wir fügen einen ersten Eintrag hinzu: Max kauft 2 Brote für 3,50€.",
+                instruction: "Fügen Sie die erste Datenzeile hinzu:",
+                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine Einkaufsliste</title>\n</head>\n<body>\n    <h1>🛒 Meine Einkaufsliste</h1>\n    <table border='1'>\n        <tr>\n            <th>Name</th>\n            <th>Stück</th>\n            <th>Artikel</th>\n            <th>Preis</th>\n            <th>Link</th>\n        </tr>\n        <tr>\n            <td>Max</td>\n            <td>2</td>\n            <td>Brot</td>\n            <td>3,50€</td>\n            <td>Shop</td>\n        </tr>\n    </table>\n</body>\n</html>",
+                hint: "<td> = Table Data (normale Tabellenzelle)",
+                validation: (code) => code.includes('<td>') && code.includes('Max') && code.includes('Brot'),
+                success: "✅ Toll! Der erste Einkaufseintrag ist da!"
+            },
+            {
+                title: "Schritt 6: Link zum Online-Shop",
+                description: "Jetzt machen wir unsere Einkaufsliste interaktiv! Mit <strong>&lt;a&gt;</strong>-Tags erstellen wir Links zu Online-Shops. Das href-Attribut bestimmt wohin der Link führt.",
+                instruction: "Machen Sie 'Shop' zu einem echten Link:",
+                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine Einkaufsliste</title>\n</head>\n<body>\n    <h1>🛒 Meine Einkaufsliste</h1>\n    <table border='1'>\n        <tr>\n            <th>Name</th>\n            <th>Stück</th>\n            <th>Artikel</th>\n            <th>Preis</th>\n            <th>Link</th>\n        </tr>\n        <tr>\n            <td>Max</td>\n            <td>2</td>\n            <td>Brot</td>\n            <td>3,50€</td>\n            <td><a href='https://shop.rewe.de'>Shop</a></td>\n        </tr>\n    </table>\n</body>\n</html>",
+                hint: "href='URL' bestimmt das Linkziel. Sie können auch andere Shop-URLs verwenden!",
+                validation: (code) => code.includes('<a') && code.includes('href') && code.includes('</a>'),
+                success: "✅ Fantastisch! Ihr erster Shop-Link funktioniert!"
+            },
+            {
+                title: "Schritt 7: Zweite Einkaufszeile",
+                description: "Eine Einkaufsliste wird erst mit mehreren Einträgen richtig nützlich! Fügen wir einen zweiten Eintrag hinzu: Anna braucht 1 Milch für 1,20€.",
+                instruction: "Fügen Sie eine zweite Zeile hinzu:",
+                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine Einkaufsliste</title>\n</head>\n<body>\n    <h1>🛒 Meine Einkaufsliste</h1>\n    <table border='1'>\n        <tr>\n            <th>Name</th>\n            <th>Stück</th>\n            <th>Artikel</th>\n            <th>Preis</th>\n            <th>Link</th>\n        </tr>\n        <tr>\n            <td>Max</td>\n            <td>2</td>\n            <td>Brot</td>\n            <td>3,50€</td>\n            <td><a href='https://shop.rewe.de'>Shop</a></td>\n        </tr>\n        <tr>\n            <td>Anna</td>\n            <td>1</td>\n            <td>Milch</td>\n            <td>1,20€</td>\n            <td><a href='https://shop.rewe.de'>Shop</a></td>\n        </tr>\n    </table>\n</body>\n</html>",
+                hint: "Kopieren Sie die erste <tr>-Zeile und ändern Sie die Inhalte!",
+                validation: (code) => code.includes('Anna') && code.includes('Milch'),
+                success: "✅ Super! Ihre Einkaufsliste wächst!"
+            },
+            {
+                title: "Schritt 8: Eingabeformular erstellen",
+                description: "Jetzt wird es richtig interaktiv! Mit <strong>&lt;form&gt;</strong> erstellen wir ein Eingabeformular. Nutzer können neue Artikel zur Liste hinzufügen. Das macht unsere Einkaufsliste zu einer echten Web-Anwendung!",
+                instruction: "Fügen Sie ein Formular unter der Tabelle hinzu:",
+                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine Einkaufsliste</title>\n</head>\n<body>\n    <h1>🛒 Meine Einkaufsliste</h1>\n    <table border='1'>\n        <tr>\n            <th>Name</th>\n            <th>Stück</th>\n            <th>Artikel</th>\n            <th>Preis</th>\n            <th>Link</th>\n        </tr>\n        <tr>\n            <td>Max</td>\n            <td>2</td>\n            <td>Brot</td>\n            <td>3,50€</td>\n            <td><a href='https://shop.rewe.de'>Shop</a></td>\n        </tr>\n        <tr>\n            <td>Anna</td>\n            <td>1</td>\n            <td>Milch</td>\n            <td>1,20€</td>\n            <td><a href='https://shop.rewe.de'>Shop</a></td>\n        </tr>\n    </table>\n    <h2>Neuen Artikel hinzufügen:</h2>\n    <form>\n    </form>\n</body>\n</html>",
+                hint: "Das <form>-Element ist der Container für Eingabefelder!",
+                validation: (code) => code.includes('<form>') && code.includes('</form>') && code.includes('<h2>'),
+                success: "✅ Großartig! Das Formular-Grundgerüst steht!"
+            },
+            {
+                title: "Schritt 9: Eingabefelder hinzufügen",
+                description: "Jetzt erstellen wir die Eingabefelder! Mit <strong>&lt;input&gt;</strong> können Nutzer Daten eingeben. Wir brauchen Felder für Name, Stück, Artikel und Preis. Jedes Feld bekommt einen aussagekräftigen placeholder.",
+                instruction: "Fügen Sie die Eingafelder in das Formular ein:",
+                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine Einkaufsliste</title>\n</head>\n<body>\n    <h1>🛒 Meine Einkaufsliste</h1>\n    <table border='1'>\n        <tr>\n            <th>Name</th>\n            <th>Stück</th>\n            <th>Artikel</th>\n            <th>Preis</th>\n            <th>Link</th>\n        </tr>\n        <tr>\n            <td>Max</td>\n            <td>2</td>\n            <td>Brot</td>\n            <td>3,50€</td>\n            <td><a href='https://shop.rewe.de'>Shop</a></td>\n        </tr>\n        <tr>\n            <td>Anna</td>\n            <td>1</td>\n            <td>Milch</td>\n            <td>1,20€</td>\n            <td><a href='https://shop.rewe.de'>Shop</a></td>\n        </tr>\n    </table>\n    <h2>Neuen Artikel hinzufügen:</h2>\n    <form>\n        <input type='text' placeholder='Name eingeben'>\n        <input type='number' placeholder='Stück'>\n        <input type='text' placeholder='Artikel'>\n        <input type='text' placeholder='Preis'>\n        <button type='submit'>Hinzufügen</button>\n    </form>\n</body>\n</html>",
+                hint: "type='text' für Text, type='number' für Zahlen, placeholder zeigt Hilfstext!",
+                validation: (code) => code.includes('<input') && code.includes('placeholder') && code.includes('<button'),
+                success: "✅ Perfekt! Das interaktive Formular ist fertig!"
+            },
+            {
+                title: "Schritt 10: Fertig! 🎉",
+                description: "Herzlichen Glückwunsch! Sie haben eine vollständige, interaktive Einkaufsliste erstellt! 🛒<br><br><strong>🎯 Was Sie gelernt haben:</strong><br>• <strong>HTML-Tabellen</strong> mit &lt;table&gt;, &lt;tr&gt;, &lt;th&gt;, &lt;td&gt;<br>• <strong>Links</strong> mit &lt;a href&gt;<br>• <strong>Formulare</strong> mit &lt;form&gt; und &lt;input&gt;<br>• <strong>Verschiedene Input-Typen</strong> (text, number)<br>• <strong>Interaktive Buttons</strong> mit &lt;button&gt;<br><br><strong>🚀 Nächste Schritte:</strong><br>• Fügen Sie CSS für schöneres Design hinzu<br>• Lernen Sie JavaScript für echte Interaktivität<br>• Erstellen Sie weitere Tabellen für andere Zwecke<br>• Experimentieren Sie mit verschiedenen Formular-Elementen",
+                instruction: "Ihre interaktive Einkaufsliste ist komplett! Testen Sie die Eingabefelder in der Vorschau!",
+                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine Einkaufsliste</title>\n</head>\n<body>\n    <h1>🛒 Meine Einkaufsliste</h1>\n    <table border='1'>\n        <tr>\n            <th>Name</th>\n            <th>Stück</th>\n            <th>Artikel</th>\n            <th>Preis</th>\n            <th>Link</th>\n        </tr>\n        <tr>\n            <td>Max</td>\n            <td>2</td>\n            <td>Brot</td>\n            <td>3,50€</td>\n            <td><a href='https://shop.rewe.de'>Shop</a></td>\n        </tr>\n        <tr>\n            <td>Anna</td>\n            <td>1</td>\n            <td>Milch</td>\n            <td>1,20€</td>\n            <td><a href='https://shop.rewe.de'>Shop</a></td>\n        </tr>\n    </table>\n    <h2>Neuen Artikel hinzufügen:</h2>\n    <form>\n        <input type='text' placeholder='Name eingeben'>\n        <input type='number' placeholder='Stück'>\n        <input type='text' placeholder='Artikel'>\n        <input type='text' placeholder='Preis'>\n        <button type='submit'>Hinzufügen</button>\n    </form>\n</body>\n</html>",
+                hint: "Sie können jetzt eigene Einkaufslisten für verschiedene Anlässe erstellen!",
+                validation: () => true,
+                success: "🎉 Sie sind jetzt HTML-Tabellen und Formular-Experte! Glückwunsch!"
+            }
+        ];
+
+        // HTML2 Tutorial Funktionen
+        function initHTML2Tutorial() {
+            currentHTML2Step = 0;
+            showHTML2Step();
+            updateHTML2Progress();
+            
+            // Live-Vorschau bei Eingabe
+            const editor = document.getElementById('html2-editor');
+            if (editor) {
+                editor.addEventListener('input', updateHTML2Preview);
+            }
+        }
+
+        function showHTML2Step() {
+            const step = html2Steps[currentHTML2Step];
+            const container = document.getElementById('html2-tutorial-container');
+            
+            // HTML-Code für Anzeige escapen
+            const escapedExample = step.example
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+            
+            container.innerHTML = `
+                <div class="bg-pink-50 p-4 rounded-lg border-l-4 border-pink-500 mb-4">
+                    <h3 class="text-lg font-semibold text-pink-800 mb-2">${step.title}</h3>
+                    <p class="text-pink-700 mb-3">${step.description}</p>
+                    <p class="font-medium text-pink-800">${step.instruction}</p>
+                    <div class="mt-3 bg-white p-3 rounded border">
+                        <p class="text-sm text-gray-600 mb-2">Beispiel:</p>
+                        <code class="text-sm bg-gray-100 p-2 rounded block whitespace-pre font-mono">${escapedExample}</code>
+                    </div>
+                </div>
+            `;
+
+            // Navigation Buttons updaten
+            updateHTML2NavigationButtons();
+        }
+
+        function updateHTML2Progress() {
+            const progressText = document.getElementById('html2-progress');
+            const progressBar = document.getElementById('html2-progress-bar');
+            
+            progressText.textContent = `Schritt ${currentHTML2Step + 1} von ${html2Steps.length}`;
+            const percentage = ((currentHTML2Step + 1) / html2Steps.length) * 100;
+            progressBar.style.width = `${percentage}%`;
+        }
+
+        function updateHTML2Preview() {
+            const editor = document.getElementById('html2-editor');
+            const preview = document.getElementById('html2-preview');
+            
+            if (editor && preview) {
+                const code = editor.value;
+                try {
+                    preview.innerHTML = code || '<p class="text-gray-400 italic">Ihre Einkaufsliste erscheint hier...</p>';
+                } catch (error) {
+                    preview.innerHTML = '<p class="text-red-600">Fehler im HTML-Code</p>';
+                }
+            }
+        }
+
+        function checkHTML2Step() {
+            const editor = document.getElementById('html2-editor');
+            const step = html2Steps[currentHTML2Step];
+            const feedbackDiv = document.getElementById('html2-feedback');
+            
+            if (!editor || !step) return;
+            
+            const code = editor.value.toLowerCase();
+            const isValid = step.validation(code);
+            
+            feedbackDiv.className = `mt-4 p-4 rounded-lg ${isValid ? 'bg-green-100 border border-green-300' : 'bg-yellow-100 border border-yellow-300'}`;
+            feedbackDiv.innerHTML = isValid ? 
+                `<div class="text-green-800 font-medium">${step.success}</div>` :
+                `<div class="text-yellow-800"><strong>Noch nicht ganz richtig.</strong><br>Überprüfen Sie Ihren Code oder nutzen Sie den Tipp-Button.</div>`;
+            
+            feedbackDiv.classList.remove('hidden');
+            
+            // Next Button aktivieren wenn korrekt
+            const nextBtn = document.getElementById('html2-next-btn');
+            if (nextBtn) {
+                nextBtn.disabled = !isValid;
+            }
+            
+            updateHTML2Preview();
+        }
+
+        function showHint2() {
+            const step = html2Steps[currentHTML2Step];
+            const feedbackDiv = document.getElementById('html2-feedback');
+            
+            feedbackDiv.className = 'mt-4 p-4 rounded-lg bg-blue-100 border border-blue-300';
+            feedbackDiv.innerHTML = `<div class="text-blue-800"><strong>💡 Tipp:</strong><br>${step.hint}</div>`;
+            feedbackDiv.classList.remove('hidden');
+        }
+
+        function nextHTML2Step() {
+            if (currentHTML2Step < html2Steps.length - 1) {
+                currentHTML2Step++;
+                showHTML2Step();
+                updateHTML2Progress();
+                
+                // Feedback verstecken
+                const feedbackDiv = document.getElementById('html2-feedback');
+                feedbackDiv.classList.add('hidden');
+                
+                // Editor leeren für neuen Schritt
+                const editor = document.getElementById('html2-editor');
+                if (editor) {
+                    editor.value = '';
+                }
+                
+                // Vorschau zurücksetzen
+                updateHTML2Preview();
+                
+                // Next Button wieder deaktivieren
+                const nextBtn = document.getElementById('html2-next-btn');
+                if (nextBtn && currentHTML2Step < html2Steps.length - 1) {
+                    nextBtn.disabled = true;
+                }
+            }
+        }
+
+        function previousHTML2Step() {
+            if (currentHTML2Step > 0) {
+                currentHTML2Step--;
+                showHTML2Step();
+                updateHTML2Progress();
+                
+                // Feedback verstecken
+                const feedbackDiv = document.getElementById('html2-feedback');
+                feedbackDiv.classList.add('hidden');
+                
+                // Editor leeren für neuen Schritt
+                const editor = document.getElementById('html2-editor');
+                if (editor) {
+                    editor.value = '';
+                }
+                
+                // Vorschau zurücksetzen
+                updateHTML2Preview();
+            }
+        }
+
+        function updateHTML2NavigationButtons() {
+            const prevBtn = document.getElementById('html2-prev-btn');
+            const nextBtn = document.getElementById('html2-next-btn');
+            
+            if (prevBtn) prevBtn.disabled = currentHTML2Step === 0;
+            if (nextBtn) nextBtn.disabled = true; // Wird durch checkHTML2Step() aktiviert
+        }
+
+        // Jump-to-step Funktion für HTML2
+        function jumpToHTML2Step(stepIndex) {
+            currentHTML2Step = stepIndex;
+            showHTML2Step();
+            updateHTML2Progress();
+            
+            // Feedback verstecken
+            const feedbackDiv = document.getElementById('html2-feedback');
+            feedbackDiv.classList.add('hidden');
+            
+            // Editor leeren für neuen Schritt
+            const editor = document.getElementById('html2-editor');
+            if (editor) {
+                editor.value = '';
+            }
+            
+            // Vorschau zurücksetzen
+            updateHTML2Preview();
+            
+            // Navigation Buttons aktualisieren
+            updateHTML2NavigationButtons();
         }
     </script>
 
