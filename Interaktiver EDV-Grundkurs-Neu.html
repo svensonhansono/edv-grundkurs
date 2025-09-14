@@ -200,6 +200,9 @@
                 <button onclick="changeTab('hardware')" class="tab py-3 px-4 text-center text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700 transition">
                     Hardware-Grundlagen
                 </button>
+                <button onclick="changeTab('html')" class="tab py-3 px-4 text-center text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700 transition">
+                    HTML-Grundlagen
+                </button>
             </nav>
         </div>
 
@@ -239,6 +242,12 @@
                         <div class="text-4xl mb-3">🖥️</div>
                         <h3 class="text-lg font-semibold text-orange-800 mb-2">Hardware-Grundlagen</h3>
                         <p class="text-sm text-orange-600">Computer-Komponenten kennenlernen</p>
+                    </div>
+                    
+                    <div class="bg-red-50 p-6 rounded-lg border hover:shadow-lg transition cursor-pointer" onclick="changeTab('html')">
+                        <div class="text-4xl mb-3">🌐</div>
+                        <h3 class="text-lg font-semibold text-red-800 mb-2">HTML-Grundlagen</h3>
+                        <p class="text-sm text-red-600">Webseiten erstellen lernen</p>
                     </div>
                 </div>
                 
@@ -651,6 +660,67 @@
             </div>
         </main>
 
+        <!-- HTML Section -->
+        <main id="html" class="bg-white p-6 rounded-lg shadow-md hidden">
+            <!-- Progress Bar -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-xl font-semibold text-red-800">HTML-Grundlagen Tutorial</h2>
+                    <span id="html-progress" class="text-sm text-gray-600">Schritt 1 von 8</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div id="html-progress-bar" class="bg-red-600 h-2 rounded-full transition-all duration-300" style="width: 12.5%"></div>
+                </div>
+            </div>
+
+            <!-- Tutorial Steps -->
+            <div id="html-tutorial-container">
+                <!-- Step Content wird hier dynamisch eingefügt -->
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mt-6">
+                <!-- HTML Editor -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">🖥️ HTML-Code Editor</h3>
+                    <div class="mb-4">
+                        <textarea id="html-editor" class="w-full h-64 p-3 border border-gray-300 rounded-lg font-mono text-sm" 
+                                  placeholder="Geben Sie hier Ihren HTML-Code ein..."></textarea>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="html-check-btn" onclick="checkHTMLStep()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
+                            Schritt prüfen
+                        </button>
+                        <button id="html-hint-btn" onclick="showHint()" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
+                            💡 Tipp
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- HTML Vorschau -->
+                <div class="bg-white border rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3 p-4 border-b">🌐 Live-Vorschau</h3>
+                    <div id="html-preview" class="p-4 min-h-64" style="background: white; border: 1px solid #e5e7eb;">
+                        <p class="text-gray-400 italic">Ihre HTML-Vorschau erscheint hier...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feedback Area -->
+            <div id="html-feedback" class="mt-4 p-4 rounded-lg hidden">
+                <!-- Feedback wird hier angezeigt -->
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between items-center mt-6">
+                <button id="html-prev-btn" onclick="previousHTMLStep()" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    ← Zurück
+                </button>
+                <button id="html-next-btn" onclick="nextHTMLStep()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    Weiter →
+                </button>
+            </div>
+        </main>
+
         <!-- Shortcuts Section -->
         <main id="shortcuts" class="bg-white p-6 rounded-lg shadow-md hidden">
             <div class="aufgabe mb-6 p-4 bg-purple-50 border-l-4 border-purple-500 rounded-r-lg">
@@ -787,6 +857,11 @@
             } else {
                 contents[tabName].classList.remove('hidden');
                 document.querySelector(`.tab[onclick="changeTab('${tabName}')"]`).classList.add('active');
+                
+                // HTML Tutorial initialisieren wenn HTML-Tab geöffnet wird
+                if (tabName === 'html') {
+                    setTimeout(initHTMLTutorial, 100);
+                }
             }
         }
 
@@ -3259,6 +3334,218 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadHardwareAnswers();
         });
+
+        // HTML Tutorial System
+        let currentHTMLStep = 0;
+        const htmlSteps = [
+            {
+                title: "Schritt 1: DOCTYPE Deklaration",
+                description: "Jede HTML-Seite beginnt mit einer DOCTYPE-Deklaration. Diese sagt dem Browser, dass es sich um HTML5 handelt.",
+                instruction: "Geben Sie die DOCTYPE-Deklaration ein:",
+                example: "<!DOCTYPE html>",
+                hint: "Tipp: Die DOCTYPE-Deklaration beginnt mit <!DOCTYPE und endet mit >",
+                validation: (code) => code.trim().toLowerCase().includes('<!doctype html>'),
+                success: "✅ Perfekt! Sie haben die DOCTYPE-Deklaration hinzugefügt!"
+            },
+            {
+                title: "Schritt 2: HTML-Tag",
+                description: "Das <html>-Tag umschließt den gesamten Inhalt der Webseite. Es ist das Wurzelelement.",
+                instruction: "Fügen Sie das <html>-Tag hinzu (öffnend und schließend):",
+                example: "<!DOCTYPE html>\n<html>\n</html>",
+                hint: "Tipp: Vergessen Sie nicht das schließende </html>-Tag am Ende!",
+                validation: (code) => code.includes('<html>') && code.includes('</html>'),
+                success: "✅ Großartig! Das HTML-Grundgerüst steht!"
+            },
+            {
+                title: "Schritt 3: Head-Bereich",
+                description: "Der <head>-Bereich enthält Metainformationen über die Webseite, die nicht direkt sichtbar sind.",
+                instruction: "Fügen Sie den <head>-Bereich zwischen den <html>-Tags hinzu:",
+                example: "<!DOCTYPE html>\n<html>\n<head>\n</head>\n</html>",
+                hint: "Tipp: Der <head>-Bereich kommt VOR dem <body>-Bereich!",
+                validation: (code) => code.includes('<head>') && code.includes('</head>'),
+                success: "✅ Super! Der Head-Bereich ist da!"
+            },
+            {
+                title: "Schritt 4: Title-Element",
+                description: "Das <title>-Element bestimmt den Text, der im Browser-Tab angezeigt wird.",
+                instruction: "Fügen Sie ein <title>-Element im Head-Bereich hinzu:",
+                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine erste Webseite</title>\n</head>\n</html>",
+                hint: "Tipp: Das <title> gehört zwischen <head> und </head>",
+                validation: (code) => code.includes('<title>') && code.includes('</title>'),
+                success: "✅ Wunderbar! Ihre Seite hat jetzt einen Titel!"
+            },
+            {
+                title: "Schritt 5: Body-Bereich",
+                description: "Der <body>-Bereich enthält den sichtbaren Inhalt Ihrer Webseite.",
+                instruction: "Fügen Sie den <body>-Bereich nach dem </head>-Tag hinzu:",
+                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine erste Webseite</title>\n</head>\n<body>\n</body>\n</html>",
+                hint: "Tipp: Der <body> kommt NACH dem </head>-Tag!",
+                validation: (code) => code.includes('<body>') && code.includes('</body>'),
+                success: "✅ Fantastisch! Die Grundstruktur ist komplett!"
+            },
+            {
+                title: "Schritt 6: Erste Überschrift",
+                description: "Überschriften strukturieren den Inhalt. <h1> ist die größte Überschrift.",
+                instruction: "Fügen Sie eine <h1>-Überschrift im Body-Bereich hinzu:",
+                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine erste Webseite</title>\n</head>\n<body>\n    <h1>Willkommen auf meiner Webseite!</h1>\n</body>\n</html>",
+                hint: "Tipp: <h1> kommt zwischen <body> und </body>",
+                validation: (code) => code.includes('<h1>') && code.includes('</h1>'),
+                success: "✅ Toll! Ihre erste Überschrift ist sichtbar!"
+            },
+            {
+                title: "Schritt 7: Absatz hinzufügen",
+                description: "Absätze werden mit <p>-Tags erstellt. Sie enthalten normalen Text.",
+                instruction: "Fügen Sie einen <p>-Absatz unter der Überschrift hinzu:",
+                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine erste Webseite</title>\n</head>\n<body>\n    <h1>Willkommen auf meiner Webseite!</h1>\n    <p>Das ist mein erster Absatz in HTML!</p>\n</body>\n</html>",
+                hint: "Tipp: Der <p>-Tag kommt nach dem </h1>-Tag",
+                validation: (code) => code.includes('<p>') && code.includes('</p>'),
+                success: "✅ Perfekt! Sie haben Ihren ersten Absatz erstellt!"
+            },
+            {
+                title: "Schritt 8: Fertig! 🎉",
+                description: "Herzlichen Glückwunsch! Sie haben Ihre erste vollständige HTML-Seite erstellt!",
+                instruction: "Ihre HTML-Seite ist komplett. Schauen Sie sich das Ergebnis in der Vorschau an!",
+                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine erste Webseite</title>\n</head>\n<body>\n    <h1>Willkommen auf meiner Webseite!</h1>\n    <p>Das ist mein erster Absatz in HTML!</p>\n</body>\n</html>",
+                hint: "Sie können jetzt weitere Elemente hinzufügen: <h2>, Listen, Links, etc.",
+                validation: () => true,
+                success: "🎉 Glückwunsch! Sie sind jetzt HTML-Grundlagen-Profi!"
+            }
+        ];
+
+        function initHTMLTutorial() {
+            currentHTMLStep = 0;
+            showHTMLStep();
+            updateHTMLProgress();
+            
+            // Live-Vorschau bei Eingabe
+            const editor = document.getElementById('html-editor');
+            if (editor) {
+                editor.addEventListener('input', updateHTMLPreview);
+            }
+        }
+
+        function showHTMLStep() {
+            const step = htmlSteps[currentHTMLStep];
+            const container = document.getElementById('html-tutorial-container');
+            
+            container.innerHTML = `
+                <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-500 mb-4">
+                    <h3 class="text-lg font-semibold text-red-800 mb-2">${step.title}</h3>
+                    <p class="text-red-700 mb-3">${step.description}</p>
+                    <p class="font-medium text-red-800">${step.instruction}</p>
+                    <div class="mt-3 bg-white p-3 rounded border">
+                        <p class="text-sm text-gray-600 mb-2">Beispiel:</p>
+                        <code class="text-sm bg-gray-100 p-2 rounded block whitespace-pre">${step.example}</code>
+                    </div>
+                </div>
+            `;
+
+            // Navigation Buttons updaten
+            updateNavigationButtons();
+        }
+
+        function updateHTMLProgress() {
+            const progressText = document.getElementById('html-progress');
+            const progressBar = document.getElementById('html-progress-bar');
+            
+            progressText.textContent = `Schritt ${currentHTMLStep + 1} von ${htmlSteps.length}`;
+            const percentage = ((currentHTMLStep + 1) / htmlSteps.length) * 100;
+            progressBar.style.width = `${percentage}%`;
+        }
+
+        function updateHTMLPreview() {
+            const editor = document.getElementById('html-editor');
+            const preview = document.getElementById('html-preview');
+            
+            if (editor && preview) {
+                const code = editor.value;
+                try {
+                    preview.innerHTML = code || '<p class="text-gray-400 italic">Ihre HTML-Vorschau erscheint hier...</p>';
+                } catch (error) {
+                    preview.innerHTML = '<p class="text-red-600">Fehler im HTML-Code</p>';
+                }
+            }
+        }
+
+        function checkHTMLStep() {
+            const editor = document.getElementById('html-editor');
+            const step = htmlSteps[currentHTMLStep];
+            const feedbackDiv = document.getElementById('html-feedback');
+            
+            if (!editor || !step) return;
+            
+            const code = editor.value.toLowerCase();
+            const isValid = step.validation(code);
+            
+            feedbackDiv.className = `mt-4 p-4 rounded-lg ${isValid ? 'bg-green-100 border border-green-300' : 'bg-yellow-100 border border-yellow-300'}`;
+            feedbackDiv.innerHTML = isValid ? 
+                `<div class="text-green-800 font-medium">${step.success}</div>` :
+                `<div class="text-yellow-800"><strong>Noch nicht ganz richtig.</strong><br>Überprüfen Sie Ihren Code oder nutzen Sie den Tipp-Button.</div>`;
+            
+            feedbackDiv.classList.remove('hidden');
+            
+            // Next Button aktivieren wenn korrekt
+            const nextBtn = document.getElementById('html-next-btn');
+            if (nextBtn) {
+                nextBtn.disabled = !isValid;
+            }
+            
+            updateHTMLPreview();
+        }
+
+        function showHint() {
+            const step = htmlSteps[currentHTMLStep];
+            const feedbackDiv = document.getElementById('html-feedback');
+            
+            feedbackDiv.className = 'mt-4 p-4 rounded-lg bg-blue-100 border border-blue-300';
+            feedbackDiv.innerHTML = `<div class="text-blue-800"><strong>💡 Tipp:</strong><br>${step.hint}</div>`;
+            feedbackDiv.classList.remove('hidden');
+        }
+
+        function nextHTMLStep() {
+            if (currentHTMLStep < htmlSteps.length - 1) {
+                currentHTMLStep++;
+                showHTMLStep();
+                updateHTMLProgress();
+                
+                // Feedback verstecken
+                const feedbackDiv = document.getElementById('html-feedback');
+                feedbackDiv.classList.add('hidden');
+                
+                // Next Button wieder deaktivieren
+                const nextBtn = document.getElementById('html-next-btn');
+                if (nextBtn && currentHTMLStep < htmlSteps.length - 1) {
+                    nextBtn.disabled = true;
+                }
+            }
+        }
+
+        function previousHTMLStep() {
+            if (currentHTMLStep > 0) {
+                currentHTMLStep--;
+                showHTMLStep();
+                updateHTMLProgress();
+                
+                // Feedback verstecken
+                const feedbackDiv = document.getElementById('html-feedback');
+                feedbackDiv.classList.add('hidden');
+            }
+        }
+
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('html-prev-btn');
+            const nextBtn = document.getElementById('html-next-btn');
+            
+            if (prevBtn) prevBtn.disabled = currentHTMLStep === 0;
+            if (nextBtn) nextBtn.disabled = true; // Wird durch checkHTMLStep() aktiviert
+        }
+
+        // Tutorial initialisieren wenn HTML-Tab geöffnet wird
+        function initHTMLIfNeeded() {
+            if (document.getElementById('html').style.display !== 'none') {
+                initHTMLTutorial();
+            }
+        }
     </script>
 
 </body>
