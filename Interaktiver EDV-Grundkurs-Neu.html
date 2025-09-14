@@ -267,7 +267,7 @@
         </div>
 
         <!-- Word Section -->
-        <main id="word" class="bg-white p-6 rounded-lg shadow-md hidden">
+        <main id="word" class="bg-white p-6 rounded-lg shadow-md hidden max-w-7xl mx-auto">
             <div id="word-task-container" class="mb-6">
                 <!-- Wird von JavaScript gefüllt -->
             </div>
@@ -476,7 +476,7 @@
         </main>
 
         <!-- Excel Section -->
-        <main id="excel" class="bg-white p-6 rounded-lg shadow-md hidden">
+        <main id="excel" class="bg-white p-6 rounded-lg shadow-md hidden max-w-7xl mx-auto">
             <div id="excel-task-container" class="mb-6">
                 <!-- Wird von JavaScript gefüllt -->
             </div>
@@ -570,7 +570,7 @@
         </main>
 
         <!-- Hardware Section -->
-        <main id="hardware" class="bg-white p-6 rounded-lg shadow-md hidden">
+        <main id="hardware" class="bg-white p-6 rounded-lg shadow-md hidden max-w-7xl mx-auto">
             <div class="aufgabe mb-6 p-4 bg-orange-50 border-l-4 border-orange-500 rounded-r-lg">
                 <h2 class="text-xl font-semibold mb-2 text-orange-800">Hardware-Grundlagen - Aufgabe 1</h2>
                 <p class="text-orange-700">Füllen Sie die gestrichelten Linien in der PDF-Seite 10.15 aus.</p>
@@ -670,7 +670,7 @@
         </main>
 
         <!-- HTML Section -->
-        <main id="html" class="bg-white p-6 rounded-lg shadow-md hidden">
+        <main id="html" class="bg-white p-6 rounded-lg shadow-md hidden max-w-7xl mx-auto">
             <!-- Progress Bar -->
             <div class="mb-6">
                 <div class="flex justify-between items-center mb-2">
@@ -746,15 +746,15 @@
         </main>
 
         <!-- HTML2 Section -->
-        <main id="html2" class="bg-white p-6 rounded-lg shadow-md hidden">
+        <main id="html2" class="bg-white p-6 rounded-lg shadow-md hidden max-w-7xl mx-auto">
             <!-- Progress Bar -->
             <div class="mb-6">
                 <div class="flex justify-between items-center mb-2">
                     <h2 class="text-xl font-semibold text-pink-800">HTML-Grundlagen 2: Einkaufsliste</h2>
-                    <span id="html2-progress" class="text-sm text-gray-600">Schritt 1 von 10</span>
+                    <span id="html2-progress" class="text-sm text-gray-600">Schritt 1 von 11</span>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2">
-                    <div id="html2-progress-bar" class="bg-pink-600 h-2 rounded-full transition-all duration-300" style="width: 10%"></div>
+                    <div id="html2-progress-bar" class="bg-pink-600 h-2 rounded-full transition-all duration-300" style="width: 9.1%"></div>
                 </div>
             </div>
 
@@ -818,13 +818,15 @@
                     <button onclick="jumpToHTML2Step(6)" class="px-2 py-1 text-xs bg-pink-200 hover:bg-pink-300 rounded">6</button>
                     <button onclick="jumpToHTML2Step(7)" class="px-2 py-1 text-xs bg-pink-200 hover:bg-pink-300 rounded">7</button>
                     <button onclick="jumpToHTML2Step(8)" class="px-2 py-1 text-xs bg-pink-200 hover:bg-pink-300 rounded">8</button>
-                    <button onclick="jumpToHTML2Step(9)" class="px-2 py-1 text-xs bg-pink-200 hover:bg-pink-300 rounded">Fertig</button>
+                    <button onclick="jumpToHTML2Step(9)" class="px-2 py-1 text-xs bg-pink-200 hover:bg-pink-300 rounded">9</button>
+                    <button onclick="jumpToHTML2Step(10)" class="px-2 py-1 text-xs bg-pink-200 hover:bg-pink-300 rounded">10</button>
+                    <button onclick="jumpToHTML2Step(11)" class="px-2 py-1 text-xs bg-pink-200 hover:bg-pink-300 rounded">Fertig</button>
                 </div>
             </div>
         </main>
 
         <!-- Shortcuts Section -->
-        <main id="shortcuts" class="bg-white p-6 rounded-lg shadow-md hidden">
+        <main id="shortcuts" class="bg-white p-6 rounded-lg shadow-md hidden max-w-7xl mx-auto">
             <div class="aufgabe mb-6 p-4 bg-purple-50 border-l-4 border-purple-500 rounded-r-lg">
                 <h2 class="text-xl font-semibold mb-2 text-purple-800">Shortcuts-Grundlagen</h2>
                 <p class="text-purple-700">Lernen und üben Sie die wichtigsten Tastenkombinationen - erst das Quiz, dann die Praxis!</p>
@@ -885,7 +887,7 @@
         </main>
 
         <!-- Explorer Section -->
-        <main id="explorer" class="bg-white p-6 rounded-lg shadow-md hidden">
+        <main id="explorer" class="bg-white p-6 rounded-lg shadow-md hidden max-w-7xl mx-auto">
             <div class="aufgabe mb-6 p-4 bg-indigo-50 border-l-4 border-indigo-500 rounded-r-lg">
                 <h2 class="text-xl font-semibold mb-2 text-indigo-800">Explorer-Grundlagen</h2>
                 <p class="text-indigo-700">Lernen Sie die Grundlagen der Windows-Dateiverwaltung mit dem Explorer!</p>
@@ -3705,7 +3707,7 @@
             },
             {
                 title: "Schritt 1: HTML-Grundgerüst für Einkaufsliste",
-                description: "Zuerst erstellen wir das HTML-Grundgerüst für unsere Einkaufsliste. Wir beginnen mit der bekannten Struktur, aber diesmal mit einem aussagekräftigen Titel.",
+                description: "Jede Webseite beginnt mit der gleichen Grundstruktur - wie das Fundament eines Hauses! 🏠<br><br><strong>🔍 Was passiert Schritt für Schritt:</strong><br>1. <strong>&lt;!DOCTYPE html&gt;</strong> - Sagt dem Browser: 'Das ist HTML5!'<br>2. <strong>&lt;html&gt;</strong> - Der 'Container' für die ganze Webseite<br>3. <strong>&lt;head&gt;</strong> - Unsichtbare Informationen (wie Metadaten)<br>4. <strong>&lt;title&gt;</strong> - Text der im Browser-Tab erscheint<br>5. <strong>&lt;body&gt;</strong> - Hier kommt der sichtbare Inhalt rein<br><br><strong>💡 Warum ist das wichtig?</strong><br>Ohne diese Struktur versteht der Browser nicht, was Sie wollen. Es ist wie ein Brief ohne Umschlag!",
                 instruction: "Erstellen Sie das HTML-Grundgerüst mit dem Titel 'Meine Einkaufsliste':",
                 example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine Einkaufsliste</title>\n</head>\n<body>\n</body>\n</html>",
                 hint: "Verwenden Sie die bekannte HTML-Struktur aus HTML-Grundlagen 1!",
@@ -3714,7 +3716,7 @@
             },
             {
                 title: "Schritt 2: Hauptüberschrift mit Emoji",
-                description: "Jede gute Einkaufsliste braucht eine ansprechende Überschrift! Wir verwenden ein Einkaufswagen-Emoji 🛒 um die Liste visuell interessanter zu machen.",
+                description: "Jede professionelle Webseite braucht eine klare Überschrift - wie die Schlagzeile einer Zeitung! 📰<br><br><strong>🔍 Was macht &lt;h1&gt; besonders:</strong><br>• <strong>Größte Überschrift</strong> - Fällt sofort ins Auge<br>• <strong>SEO-wichtig</strong> - Google liebt h1-Tags<br>• <strong>Struktur</strong> - Zeigt was das Wichtigste ist<br>• <strong>Accessibility</strong> - Screenreader erkennen es als Hauptthema<br><br><strong>🎨 Warum Emojis?</strong><br>• Machen die Seite lebendiger und freundlicher<br>• Funktionieren auf allen modernen Geräten<br>• Sparen Platz statt langer Beschreibungen<br>• Das 🛒 zeigt sofort: 'Das ist zum Einkaufen!'",
                 instruction: "Fügen Sie eine h1-Überschrift mit Emoji hinzu:",
                 example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine Einkaufsliste</title>\n</head>\n<body>\n    <h1>🛒 Meine Einkaufsliste</h1>\n</body>\n</html>",
                 hint: "Kopieren Sie das Einkaufswagen-Emoji 🛒 aus dem Beispiel!",
@@ -3723,7 +3725,7 @@
             },
             {
                 title: "Schritt 3: Tabelle erstellen",
-                description: "Jetzt erstellen wir eine HTML-Tabelle! Tabellen sind perfekt für strukturierte Daten wie Einkaufslisten. Das <strong>&lt;table&gt;</strong>-Element ist der Container für unsere Tabelle.",
+                description: "Jetzt wird es spannend - wir erstellen unsere erste HTML-Tabelle! 📊<br><br><strong>🔍 Warum Tabellen für Einkaufslisten perfekt sind:</strong><br>• <strong>Strukturiert</strong> - Jeder Artikel hat seinen festen Platz<br>• <strong>Übersichtlich</strong> - Alle Daten auf einen Blick<br>• <strong>Vergleichbar</strong> - Preise können leicht verglichen werden<br>• <strong>Sortierbar</strong> - Später mit JavaScript erweiterbar<br><br><strong>📋 Das &lt;table&gt;-Element:</strong><br>• Ist der 'Container' für die ganze Tabelle<br>• <strong>border='1'</strong> macht die Linien sichtbar<br>• Ohne border='1' sieht man nur den Text<br>• Moderne Webseiten nutzen CSS, aber border='1' ist schnell!",
                 instruction: "Fügen Sie eine Tabelle mit border='1' hinzu:",
                 example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine Einkaufsliste</title>\n</head>\n<body>\n    <h1>🛒 Meine Einkaufsliste</h1>\n    <table border='1'>\n    </table>\n</body>\n</html>",
                 hint: "Das border='1' Attribut macht die Tabellenlinien sichtbar!",
@@ -3749,13 +3751,13 @@
                 success: "✅ Toll! Der erste Einkaufseintrag ist da!"
             },
             {
-                title: "Schritt 6: Link zum Online-Shop",
-                description: "Jetzt machen wir unsere Einkaufsliste interaktiv! Mit <strong>&lt;a&gt;</strong>-Tags erstellen wir Links zu Online-Shops. Das href-Attribut bestimmt wohin der Link führt.",
-                instruction: "Machen Sie 'Shop' zu einem echten Link:",
-                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine Einkaufsliste</title>\n</head>\n<body>\n    <h1>🛒 Meine Einkaufsliste</h1>\n    <table border='1'>\n        <tr>\n            <th>Name</th>\n            <th>Stück</th>\n            <th>Artikel</th>\n            <th>Preis</th>\n            <th>Link</th>\n        </tr>\n        <tr>\n            <td>Max</td>\n            <td>2</td>\n            <td>Brot</td>\n            <td>3,50€</td>\n            <td><a href='https://shop.rewe.de'>Shop</a></td>\n        </tr>\n    </table>\n</body>\n</html>",
-                hint: "href='URL' bestimmt das Linkziel. Sie können auch andere Shop-URLs verwenden!",
+                title: "Schritt 6: Interaktive Links zu Online-Shops",
+                description: "Jetzt wird Ihre Einkaufsliste richtig praktisch - mit klickbaren Links! 🔗<br><br><strong>🔍 Was macht &lt;a&gt;-Tags so mächtig:</strong><br>• <strong>href='URL'</strong> - Bestimmt das Ziel des Links<br>• <strong>Klickbar</strong> - Nutzer können direkt zum Shop springen<br>• <strong>Blau & unterstrichen</strong> - Browser zeigt es automatisch als Link<br>• <strong>target='_blank'</strong> - Öffnet in neuem Tab (optional)<br><br><strong>🏪 Shop-Beispiele die Sie nutzen können:</strong><br>• <strong>REWE:</strong> https://shop.rewe.de<br>• <strong>Amazon:</strong> https://amazon.de<br>• <strong>Edeka:</strong> https://www.edeka.de<br>• <strong>Lidl:</strong> https://www.lidl.de<br><br><strong>💡 Profi-Tipp:</strong> Mit target='_blank' öffnet sich der Shop in einem neuen Tab!",
+                instruction: "Verwandeln Sie 'Shop' in einen echten Link zu einem Online-Shop:",
+                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine Einkaufsliste</title>\n</head>\n<body>\n    <h1>🛒 Meine Einkaufsliste</h1>\n    <table border='1'>\n        <tr>\n            <th>Name</th>\n            <th>Stück</th>\n            <th>Artikel</th>\n            <th>Preis</th>\n            <th>Link</th>\n        </tr>\n        <tr>\n            <td>Max</td>\n            <td>2</td>\n            <td>Brot</td>\n            <td>3,50€</td>\n            <td><a href='https://shop.rewe.de' target='_blank'>🏪 REWE</a></td>\n        </tr>\n    </table>\n</body>\n</html>",
+                hint: "Probieren Sie verschiedene Shops: REWE, Amazon, Lidl, Edeka - oder Ihren Lieblings-Online-Shop!",
                 validation: (code) => code.includes('<a') && code.includes('href') && code.includes('</a>'),
-                success: "✅ Fantastisch! Ihr erster Shop-Link funktioniert!"
+                success: "✅ Fantastisch! Ihr Shop-Link ist live - Nutzer können jetzt direkt zum Einkaufen springen!"
             },
             {
                 title: "Schritt 7: Zweite Einkaufszeile",
@@ -3767,8 +3769,17 @@
                 success: "✅ Super! Ihre Einkaufsliste wächst!"
             },
             {
-                title: "Schritt 8: Eingabeformular erstellen",
-                description: "Jetzt wird es richtig interaktiv! Mit <strong>&lt;form&gt;</strong> erstellen wir ein Eingabeformular. Nutzer können neue Artikel zur Liste hinzufügen. Das macht unsere Einkaufsliste zu einer echten Web-Anwendung!",
+                title: "Schritt 8: Produktbilder hinzufügen",
+                description: "Machen wir unsere Einkaufsliste noch visueller mit Produktbildern! 📸<br><br><strong>🔍 Warum Bilder in Einkaufslisten großartig sind:</strong><br>• <strong>Schnelle Erkennung</strong> - Ein Blick genügt um zu wissen was gemeint ist<br>• <strong>Fehler vermeiden</strong> - Bild zeigt genau das richtige Produkt<br>• <strong>Appetitlich</strong> - Essen sieht mit Bildern leckerer aus<br>• <strong>Professionell</strong> - Wie in echten Online-Shops<br><br><strong>🖼️ Das &lt;img&gt;-Tag:</strong><br>• <strong>src='URL'</strong> - Link zum Bild<br>• <strong>alt='Text'</strong> - Beschreibung für Screenreader<br>• <strong>width='100'</strong> - Bildbreite in Pixeln<br>• <strong>Selbstschließend</strong> - Kein &lt;/img&gt; nötig!<br><br><strong>🌐 Kostenlose Bilder finden:</strong><br>• Unsplash.com - Hochwertige kostenlose Fotos<br>• Pixabay.com - Große Auswahl<br>• Oder Google Bilder (Nutzungsrechte beachten!)",
+                instruction: "Fügen Sie eine neue Spalte 'Bild' und ein Produktbild hinzu:",
+                example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine Einkaufsliste</title>\n</head>\n<body>\n    <h1>🛒 Meine Einkaufsliste</h1>\n    <table border='1'>\n        <tr>\n            <th>Name</th>\n            <th>Stück</th>\n            <th>Artikel</th>\n            <th>Preis</th>\n            <th>Link</th>\n            <th>Bild</th>\n        </tr>\n        <tr>\n            <td>Max</td>\n            <td>2</td>\n            <td>Brot</td>\n            <td>3,50€</td>\n            <td><a href='https://shop.rewe.de' target='_blank'>🏪 REWE</a></td>\n            <td><img src='https://images.unsplash.com/photo-1509440159596-0249088772ff?w=100' alt='Frisches Brot' width='80'></td>\n        </tr>\n        <tr>\n            <td>Anna</td>\n            <td>1</td>\n            <td>Milch</td>\n            <td>1,20€</td>\n            <td><a href='https://shop.rewe.de' target='_blank'>🏪 REWE</a></td>\n            <td><img src='https://images.unsplash.com/photo-1550583724-b2692b85b150?w=100' alt='Frische Milch' width='80'></td>\n        </tr>\n    </table>\n</body>\n</html>",
+                hint: "Sie können eigene Bild-URLs verwenden oder die aus dem Beispiel kopieren!",
+                validation: (code) => code.includes('<img') && code.includes('src=') && code.includes('alt='),
+                success: "✅ Wow! Ihre Einkaufsliste sieht jetzt professionell aus mit echten Produktbildern!"
+            },
+            {
+                title: "Schritt 9: Eingabeformular erstellen",
+                description: "Jetzt wird es richtig interaktiv! Mit <strong>&lt;form&gt;</strong> erstellen wir ein Eingabeformular. Nutzer können neue Artikel zur Liste hinzufügen. Das macht unsere Einkaufsliste zu einer echten Web-Anwendung! 🚀<br><br><strong>🔍 Was macht Formulare so mächtig:</strong><br>• <strong>Interaktivität</strong> - Nutzer können selbst Daten eingeben<br>• <strong>Dynamisch</strong> - Liste kann wachsen und sich ändern<br>• <strong>Benutzerfreundlich</strong> - Einfach zu bedienen<br>• <strong>Web-Standard</strong> - Funktioniert überall<br><br><strong>📝 Form-Elemente die wir brauchen:</strong><br>• <strong>&lt;form&gt;</strong> - Der Container für alle Eingabefelder<br>• <strong>&lt;h2&gt;</strong> - Überschrift für das Formular<br>• Gleich kommen die &lt;input&gt;-Felder dazu!",
                 instruction: "Fügen Sie ein Formular unter der Tabelle hinzu:",
                 example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine Einkaufsliste</title>\n</head>\n<body>\n    <h1>🛒 Meine Einkaufsliste</h1>\n    <table border='1'>\n        <tr>\n            <th>Name</th>\n            <th>Stück</th>\n            <th>Artikel</th>\n            <th>Preis</th>\n            <th>Link</th>\n        </tr>\n        <tr>\n            <td>Max</td>\n            <td>2</td>\n            <td>Brot</td>\n            <td>3,50€</td>\n            <td><a href='https://shop.rewe.de'>Shop</a></td>\n        </tr>\n        <tr>\n            <td>Anna</td>\n            <td>1</td>\n            <td>Milch</td>\n            <td>1,20€</td>\n            <td><a href='https://shop.rewe.de'>Shop</a></td>\n        </tr>\n    </table>\n    <h2>Neuen Artikel hinzufügen:</h2>\n    <form>\n    </form>\n</body>\n</html>",
                 hint: "Das <form>-Element ist der Container für Eingabefelder!",
@@ -3776,7 +3787,7 @@
                 success: "✅ Großartig! Das Formular-Grundgerüst steht!"
             },
             {
-                title: "Schritt 9: Eingabefelder hinzufügen",
+                title: "Schritt 10: Eingabefelder hinzufügen",
                 description: "Jetzt erstellen wir die Eingabefelder! Mit <strong>&lt;input&gt;</strong> können Nutzer Daten eingeben. Wir brauchen Felder für Name, Stück, Artikel und Preis. Jedes Feld bekommt einen aussagekräftigen placeholder.",
                 instruction: "Fügen Sie die Eingafelder in das Formular ein:",
                 example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine Einkaufsliste</title>\n</head>\n<body>\n    <h1>🛒 Meine Einkaufsliste</h1>\n    <table border='1'>\n        <tr>\n            <th>Name</th>\n            <th>Stück</th>\n            <th>Artikel</th>\n            <th>Preis</th>\n            <th>Link</th>\n        </tr>\n        <tr>\n            <td>Max</td>\n            <td>2</td>\n            <td>Brot</td>\n            <td>3,50€</td>\n            <td><a href='https://shop.rewe.de'>Shop</a></td>\n        </tr>\n        <tr>\n            <td>Anna</td>\n            <td>1</td>\n            <td>Milch</td>\n            <td>1,20€</td>\n            <td><a href='https://shop.rewe.de'>Shop</a></td>\n        </tr>\n    </table>\n    <h2>Neuen Artikel hinzufügen:</h2>\n    <form>\n        <input type='text' placeholder='Name eingeben'>\n        <input type='number' placeholder='Stück'>\n        <input type='text' placeholder='Artikel'>\n        <input type='text' placeholder='Preis'>\n        <button type='submit'>Hinzufügen</button>\n    </form>\n</body>\n</html>",
@@ -3785,7 +3796,7 @@
                 success: "✅ Perfekt! Das interaktive Formular ist fertig!"
             },
             {
-                title: "Schritt 10: Fertig! 🎉",
+                title: "Schritt 11: Fertig! 🎉",
                 description: "Herzlichen Glückwunsch! Sie haben eine vollständige, interaktive Einkaufsliste erstellt! 🛒<br><br><strong>🎯 Was Sie gelernt haben:</strong><br>• <strong>HTML-Tabellen</strong> mit &lt;table&gt;, &lt;tr&gt;, &lt;th&gt;, &lt;td&gt;<br>• <strong>Links</strong> mit &lt;a href&gt;<br>• <strong>Formulare</strong> mit &lt;form&gt; und &lt;input&gt;<br>• <strong>Verschiedene Input-Typen</strong> (text, number)<br>• <strong>Interaktive Buttons</strong> mit &lt;button&gt;<br><br><strong>🚀 Nächste Schritte:</strong><br>• Fügen Sie CSS für schöneres Design hinzu<br>• Lernen Sie JavaScript für echte Interaktivität<br>• Erstellen Sie weitere Tabellen für andere Zwecke<br>• Experimentieren Sie mit verschiedenen Formular-Elementen",
                 instruction: "Ihre interaktive Einkaufsliste ist komplett! Testen Sie die Eingabefelder in der Vorschau!",
                 example: "<!DOCTYPE html>\n<html>\n<head>\n    <title>Meine Einkaufsliste</title>\n</head>\n<body>\n    <h1>🛒 Meine Einkaufsliste</h1>\n    <table border='1'>\n        <tr>\n            <th>Name</th>\n            <th>Stück</th>\n            <th>Artikel</th>\n            <th>Preis</th>\n            <th>Link</th>\n        </tr>\n        <tr>\n            <td>Max</td>\n            <td>2</td>\n            <td>Brot</td>\n            <td>3,50€</td>\n            <td><a href='https://shop.rewe.de'>Shop</a></td>\n        </tr>\n        <tr>\n            <td>Anna</td>\n            <td>1</td>\n            <td>Milch</td>\n            <td>1,20€</td>\n            <td><a href='https://shop.rewe.de'>Shop</a></td>\n        </tr>\n    </table>\n    <h2>Neuen Artikel hinzufügen:</h2>\n    <form>\n        <input type='text' placeholder='Name eingeben'>\n        <input type='number' placeholder='Stück'>\n        <input type='text' placeholder='Artikel'>\n        <input type='text' placeholder='Preis'>\n        <button type='submit'>Hinzufügen</button>\n    </form>\n</body>\n</html>",
